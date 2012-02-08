@@ -1,0 +1,12 @@
+#selector {
+    border: 1px solid #ccc;
+    padding: 10px
+}
+
+#selector input.search {
+    border: 1px solid #ccc;
+    color: #444444;
+    font: 14px Arial;
+    padding: 8px;
+    width: 400px;
+}

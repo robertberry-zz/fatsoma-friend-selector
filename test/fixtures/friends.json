@@ -1,0 +1,11 @@
+[{
+    id: 1,
+    type: "fatsoma",
+    name: "Paul Stacey",
+    icon: null
+}, {
+    id: 2,
+    type: "facebook",
+    name: "Chris Pearson",
+    icon: null
+}]

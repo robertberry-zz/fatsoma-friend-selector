@@ -1,0 +1,4 @@
+# Fatsoma Socials Friend Selector
+
+JavaScript friend selector component for use on the Fatsoma Socials main party
+page. 

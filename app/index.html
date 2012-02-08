@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Friend selector</title>
+
+<link rel="stylesheet" href="stylesheets/friend_selector.css" type="text/css" media="screen" />
+
+<script type="text/javascript" src="../lib/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="../lib/underscore.js"></script>
+<script type="text/javascript" src="friend_selector.js"></script>
+<script type="text/javascript">
+  jQuery(function ($) {
+    var selector, request;
+
+    request = $.ajax({
+      url: "../test/fixtures/friends.json",
+      type: "GET",
+      dataType: "json"
+    });
+
+    request.done(function (data) {
+      selector = new Fatsoma.UI.FriendSelector("#selector", data);
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+      alert("Unable to load test fixtures: " + testStatus);
+    });
+  });
+</script>
+</head>
+<body>
+
+<div id="selector">
+  <input type="text" class="search" />
+  <div class="selected">
+  </div>
+</div>
+  
+</body>
+</html>
