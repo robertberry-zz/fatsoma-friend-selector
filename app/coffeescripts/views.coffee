@@ -3,29 +3,43 @@
 # Author: Robert Berry
 # Created: 9th Feb 2012
 
-define ["models", "templates", "jquery", "underscore", "backbone"], (models, templates) ->
+define ["models", "templates", "jquery", "underscore",
+  "backbone", "mustache/mustache"], (models, templates) ->
   exports = {}
 
-  class exports.FriendSelector extends Backbone.View
+  class MustacheView extends Backbone.View
+    render: ->
+      $(@el).html Mustache.render(@template, @model || {})
+
+  class exports.FriendSelector extends MustacheView
+    template: templates.friend_selector
+
     events:
-      "keypress .search": "_render_autocomplete"
+      "keypress .search": "render_autocomplete"
 
     initialize: ->
-      @friends = new models.Users @options["friends"]
+      @friends = @options["friends"]
 
     search_term: ->
-      @$(".search").val()
+      @$(".search").val() || ""
 
-    _render_autocomplete: ->
+    set_search_term: (term) ->
+      @$(".search").val term
       @render_autocomplete()
 
     render_autocomplete: ->
-      term = @search_term().toLowerCase()
-      matched = @friends.filter (user) =>
-        user.get("name").toLowerCase().indexOf term != -1
-      @$(".autocomplete").html new exports.UserAutocomplete(models: matched)
+      if @search_term()
+        term = @search_term().toLowerCase()
+        matched = @friends.filter (user) =>
+          console.debug user.get("name")
+          user.get("name").toLowerCase().indexOf term != -1
+        @autocomplete = new exports.UserAutocomplete(collection: matched)
+        @autocomplete.render()
+        @$(".autocomplete").html @autocomplete.el
+      else
+        @$(".autocomplete").html ""
 
-  class exports.UserAutocomplete extends Backbone.View
+  class exports.UserAutocomplete extends MustacheView
     template: templates.user_autocomplete
 
   exports
