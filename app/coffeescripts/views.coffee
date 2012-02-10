@@ -1,7 +1,10 @@
-namespace = fatsoma.namespace
+# Views
+#
+# Author: Robert Berry
+# Created: 9th Feb 2012
 
-namespace "fatsoma.friend_selector.views", (exports) ->
-  models = fatsoma.friend_selector.models
+define ["models", "templates", "jquery", "underscore", "backbone"], (models, templates) ->
+  exports = {}
 
   class exports.FriendSelector extends Backbone.View
     events:
@@ -23,4 +26,6 @@ namespace "fatsoma.friend_selector.views", (exports) ->
       @$(".autocomplete").html new exports.UserAutocomplete(models: matched)
 
   class exports.UserAutocomplete extends Backbone.View
-    #
+    template: templates.user_autocomplete
+
+  exports
