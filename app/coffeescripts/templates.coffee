@@ -7,7 +7,9 @@ define
                      <input type="submit" />
                    '''
   user_autocomplete: '''
-                     <p></p>
+                     {{#collection}}
+                        <p>{{name}}</p>
+                     {{/collection}}
                      '''
   user_autocomplete_item: '''
                           <p>DONGS</p>

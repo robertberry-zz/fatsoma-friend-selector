@@ -16,12 +16,12 @@
         });
         selector.render();
         return this.addMatchers({
-          toBeVisible: function(elem) {
-            return $(elem).is(":visible");
+          toBeVisible: function() {
+            return $(this.actual).is(":visible");
           },
-          toBeEmpty: function(elem) {
+          toBeEmpty: function() {
             var contents;
-            contents = $(elem).html();
+            contents = $(this.actual).html();
             return !contents || contents.trim() === "";
           }
         });
@@ -74,29 +74,58 @@
             return view = selector.autocomplete;
           });
           it("should be populated", function() {
-            console.debug(autocomplete);
             return expect(autocomplete).not.toBeEmpty();
           });
-          it("should list all of the user's friends one of whose names begins with            the search term", function() {
-            var matched_friends, user, _i, _len, _results;
-            matched_friends = _(fixtures.friends).filter(match_search_term);
-            _results = [];
-            for (_i = 0, _len = matched_friends.length; _i < _len; _i++) {
-              user = matched_friends[_i];
-              _results.push(expect(view.collection.get(user.id)).toBeTruthy());
-            }
-            return _results;
+          describe("the view's collection", function() {
+            it("should contain three users (given the fixtures)", function() {
+              return expect(view.collection.length).toBe(3);
+            });
+            it("should contain three users regardless of the case of the search              term", function() {
+              selector.set_search_term(search_term.toUpperCase());
+              view = selector.autocomplete;
+              expect(view.collection.length).toBe(3);
+              selector.set_search_term(search_term.toLowerCase());
+              view = selector.autocomplete;
+              return expect(view.collection.length).toBe(3);
+            });
+            it("should list all of the user's friends one of whose names begin with              the search term", function() {
+              var collection_ids, id, matched_friends, _i, _len, _ref, _results;
+              matched_friends = _(fixtures.friends).filter(match_search_term);
+              collection_ids = view.collection.pluck("id");
+              _ref = _(matched_friends).pluck("id");
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                id = _ref[_i];
+                _results.push(expect(collection_ids).toContain(id));
+              }
+              return _results;
+            });
+            return it("should not list any of the user's friends whose names do not              contain the search term", function() {
+              var collection_ids, id, match_not_search_term, unmatched_friends, _i, _len, _ref, _results;
+              match_not_search_term = utils.complement(match_search_term);
+              unmatched_friends = _(fixtures.friends).filter(match_not_search_term);
+              collection_ids = view.collection.pluck("id");
+              _ref = _(unmatched_friends).pluck("id");
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                id = _ref[_i];
+                _results.push(expect(collection_ids).not.toContain(id));
+              }
+              return _results;
+            });
           });
-          return it("should not list any of the user's friends whose names do not            contain the search term", function() {
-            var match_not_search_term, unmatched_friends, user, _i, _len, _results;
-            match_not_search_term = utils.complement(match_search_term);
-            unmatched_friends = _(fixtures.friends).filter(match_not_search_term);
-            _results = [];
-            for (_i = 0, _len = unmatched_friends.length; _i < _len; _i++) {
-              user = unmatched_friends[_i];
-              _results.push(expect(view.collection.get(user.id)).toBeFalsy());
-            }
-            return _results;
+          return describe("the html", function() {
+            return it("should contain the names of all the matched users", function() {
+              var name, user, _i, _len, _ref, _results;
+              _ref = view.collection.models;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                user = _ref[_i];
+                name = user.get("name");
+                _results.push(expect(autocomplete.html()).toContain(name));
+              }
+              return _results;
+            });
           });
         });
       });

@@ -7,8 +7,9 @@ define ->
   exports = {}
 
   exports.startsWith = (haystack, needle) ->
-    haystack.indexOf needle === 0
+    haystack.indexOf(needle) == 0
 
   exports.complement = (f) ->
-    ->
-      not f.apply(arguments)
+    -> not f.apply(f, arguments)
+
+  exports

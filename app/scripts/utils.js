@@ -1,15 +1,17 @@
 (function() {
 
   define(function() {
-    var exports, startsWith;
+    var exports;
     exports = {};
-    return startsWith = function(haystack, needle) {
-      var i, _ref;
-      for (i = 0, _ref = needle.length; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-        if (haystack[i] !== needle[i]) return false;
-      }
-      return true;
+    exports.startsWith = function(haystack, needle) {
+      return haystack.indexOf(needle) === 0;
     };
+    exports.complement = function(f) {
+      return function() {
+        return !f.apply(f, arguments);
+      };
+    };
+    return exports;
   });
 
 }).call(this);

@@ -14,7 +14,17 @@
       }
 
       MustacheView.prototype.render = function() {
-        return $(this.el).html(Mustache.render(this.template, this.model || {}));
+        var context;
+        if (this.model) {
+          context = this.model;
+        } else if (this.collection) {
+          context = {
+            collection: this.collection
+          };
+        } else {
+          context = {};
+        }
+        return $(this.el).html(Mustache.render(this.template, this.model));
       };
 
       return MustacheView;
@@ -53,11 +63,14 @@
         if (this.search_term()) {
           term = this.search_term().toLowerCase();
           matched = this.friends.filter(function(user) {
-            console.debug(user.get("name"));
-            return user.get("name").toLowerCase().indexOf(term !== -1);
+            var names;
+            names = user.get("name").split(/\s+/);
+            return _(names).any(function(name) {
+              return name.toLowerCase().indexOf(term) === 0;
+            });
           });
           this.autocomplete = new exports.UserAutocomplete({
-            collection: matched
+            collection: new models.Users(matched)
           });
           this.autocomplete.render();
           return this.$(".autocomplete").html(this.autocomplete.el);

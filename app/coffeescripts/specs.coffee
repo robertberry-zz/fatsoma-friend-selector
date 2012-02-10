@@ -1,4 +1,5 @@
-require ["views", "utils", "models", "fixtures", "jquery"], (views, utils, models, fixtures) ->
+require ["views", "utils", "models", "fixtures", "jquery"], \
+    (views, utils, models, fixtures) ->
   describe "FriendSelector", ->
     selector = null
     elem = null
@@ -9,16 +10,16 @@ require ["views", "utils", "models", "fixtures", "jquery"], (views, utils, model
       elem = $('<div id="selector"></div>')
       $("body").append elem
 
-      friends = new models.Users(fixtures.friends)
+      friends = new models.Users fixtures.friends
       selector = new views.FriendSelector
         el: $("#selector")
         friends: friends
       selector.render()
 
       @addMatchers
-        toBeVisible: (elem) -> $(elem).is ":visible"
-        toBeEmpty: (elem) ->
-          contents = $(elem).html()
+        toBeVisible: () -> $(@actual).is ":visible"
+        toBeEmpty: () ->
+          contents = $(@actual).html()
           not contents || contents.trim() == ""
 
     afterEach ->
@@ -70,18 +71,38 @@ require ["views", "utils", "models", "fixtures", "jquery"], (views, utils, model
           view = selector.autocomplete
 
         it "should be populated", ->
-          console.debug autocomplete
           expect(autocomplete).not.toBeEmpty()
 
-        it "should list all of the user's friends one of whose names begins with
-            the search term", ->
-          matched_friends = _(fixtures.friends).filter match_search_term
-          for user in matched_friends
-            expect(view.collection.get(user.id)).toBeTruthy()
+        describe "the view's collection", ->
+          it "should contain three users (given the fixtures)", ->
+            expect(view.collection.length).toBe 3
 
-        it "should not list any of the user's friends whose names do not
-            contain the search term", ->
-          match_not_search_term = utils.complement(match_search_term)
-          unmatched_friends = _(fixtures.friends).filter match_not_search_term
-          for user in unmatched_friends
-            expect(view.collection.get(user.id)).toBeFalsy()
+          it "should contain three users regardless of the case of the search
+              term", ->
+            selector.set_search_term search_term.toUpperCase()
+            view = selector.autocomplete
+            expect(view.collection.length).toBe 3
+            selector.set_search_term search_term.toLowerCase()
+            view = selector.autocomplete
+            expect(view.collection.length).toBe 3
+
+          it "should list all of the user's friends one of whose names begin with
+              the search term", ->
+            matched_friends = _(fixtures.friends).filter match_search_term
+            collection_ids = view.collection.pluck("id")
+            for id in _(matched_friends).pluck "id"
+              expect(collection_ids).toContain id
+
+          it "should not list any of the user's friends whose names do not
+              contain the search term", ->
+            match_not_search_term = utils.complement(match_search_term)
+            unmatched_friends = _(fixtures.friends).filter match_not_search_term
+            collection_ids = view.collection.pluck "id"
+            for id in _(unmatched_friends).pluck "id"
+              expect(collection_ids).not.toContain id
+
+        describe "the html", ->
+          it "should contain the names of all the matched users", ->
+            for user in view.collection.models
+              name = user.get "name"
+              expect(autocomplete.html()).toContain name

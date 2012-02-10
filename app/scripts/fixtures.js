@@ -13,12 +13,20 @@
           type: "fatsoma"
         }, {
           id: 3,
+          name: "Ron Weasley",
+          type: "facebook"
+        }, {
+          id: 4,
           name: "Simon Mellor",
           type: "fatsoma"
         }, {
-          id: 4,
+          id: 5,
           name: "Robert Berry",
           type: "hermit"
+        }, {
+          id: 6,
+          name: "Jon Roberts",
+          type: "fatsoma"
         }
       ]
     };
