@@ -1,5 +1,40 @@
+# Specs
+#
+# The Jasmine specs file for the project. Describes the behaviour of all the
+# components. To run these tests open SpecRunner.html in your browser.
+#
+# Author: Robert Berry
+# Date: February 10th 2012
+
 require ["views", "utils", "models", "fixtures", "jquery"], \
     (views, utils, models, fixtures) ->
+  describe "CollectionView", ->
+    CollectionViewStub = null
+    CollectionViewItemStub = null
+    model_attributes = null
+    view = null
+
+    beforeEach ->
+      class CollectionViewItemStub extends MustacheView
+        # pass
+      class CollectionViewStub extends views.CollectionView
+        item_view = CollectionViewItemStub
+      model_attributes = fixtures.test_models
+      view = new CollectionViewStub collection: model_attributes
+
+    it "should initially render sub views for all items in the collection", ->
+      expect(view.items.length).toBe model_attributes.length
+      for i in [0..model_attributes.length]
+        item = view.items[i]
+        expect(item.prototype).toBe CollectionViewItemStub
+        expect(item.model.attributes).toBe model_attributes[i]
+
+    it "should update the sub views to reflect the contents of the collection
+        whenever it changes", ->
+      view.collection.add fixtures.extra_test_model
+      expect(view.items.length).toBe model_attributes.length + 1
+      expect(utils.last(view.items).attributes).toBe fixtures.extra_test_model
+
   describe "FriendSelector", ->
     selector = null
     elem = null
@@ -106,3 +141,12 @@ require ["views", "utils", "models", "fixtures", "jquery"], \
             for user in view.collection.models
               name = user.get "name"
               expect(autocomplete.html()).toContain name
+
+    describe "selected list", ->
+      list = null
+
+      beforeEach ->
+        list = selector.$('.selected')
+
+      afterEach ->
+        list = null

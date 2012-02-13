@@ -1,6 +1,62 @@
 (function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   require(["views", "utils", "models", "fixtures", "jquery"], function(views, utils, models, fixtures) {
+    describe("CollectionView", function() {
+      var CollectionViewItemStub, CollectionViewStub, model_attributes, view;
+      CollectionViewStub = null;
+      CollectionViewItemStub = null;
+      model_attributes = null;
+      view = null;
+      beforeEach(function() {
+        CollectionViewItemStub = (function(_super) {
+
+          __extends(CollectionViewItemStub, _super);
+
+          function CollectionViewItemStub() {
+            CollectionViewItemStub.__super__.constructor.apply(this, arguments);
+          }
+
+          return CollectionViewItemStub;
+
+        })(MustacheView);
+        CollectionViewStub = (function(_super) {
+          var item_view;
+
+          __extends(CollectionViewStub, _super);
+
+          function CollectionViewStub() {
+            CollectionViewStub.__super__.constructor.apply(this, arguments);
+          }
+
+          item_view = CollectionViewItemStub;
+
+          return CollectionViewStub;
+
+        })(views.CollectionView);
+        model_attributes = fixtures.test_models;
+        return view = new CollectionViewStub({
+          collection: model_attributes
+        });
+      });
+      it("should initially render sub views for all items in the collection", function() {
+        var i, item, _ref, _results;
+        expect(view.items.length).toBe(model_attributes.length);
+        _results = [];
+        for (i = 0, _ref = model_attributes.length; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+          item = view.items[i];
+          expect(item.prototype).toBe(CollectionViewItemStub);
+          _results.push(expect(item.model.attributes).toBe(model_attributes[i]));
+        }
+        return _results;
+      });
+      return it("should update the sub views to reflect the contents of the collection        whenever it changes", function() {
+        view.collection.add(fixtures.extra_test_model);
+        expect(view.items.length).toBe(model_attributes.length + 1);
+        return expect(utils.last(view.items).attributes).toBe(fixtures.extra_test_model);
+      });
+    });
     return describe("FriendSelector", function() {
       var elem, friends, selector;
       selector = null;
@@ -49,7 +105,7 @@
           return expect(selector.render_autocomplete).toHaveBeenCalled();
         });
       });
-      return describe("autocomplete dropdown", function() {
+      describe("autocomplete dropdown", function() {
         var autocomplete;
         autocomplete = null;
         beforeEach(function() {
@@ -127,6 +183,16 @@
               return _results;
             });
           });
+        });
+      });
+      return describe("selected list", function() {
+        var list;
+        list = null;
+        beforeEach(function() {
+          return list = selector.$('.selected');
+        });
+        return afterEach(function() {
+          return list = null;
         });
       });
     });

@@ -11,7 +11,11 @@
         return !f.apply(f, arguments);
       };
     };
-    return exports;
+    return exports.last = function(seq) {
+      return function() {
+        return seq[seq.length - 1];
+      };
+    };
   });
 
 }).call(this);

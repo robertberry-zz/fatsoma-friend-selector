@@ -3,7 +3,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   define(["models", "templates", "jquery", "underscore", "backbone", "mustache/mustache"], function(models, templates) {
-    var MustacheView, exports;
+    var CollectionView, MustacheView, exports;
     exports = {};
     MustacheView = (function(_super) {
 
@@ -39,6 +39,17 @@
       return MustacheView;
 
     })(Backbone.View);
+    CollectionView = (function(_super) {
+
+      __extends(CollectionView, _super);
+
+      function CollectionView() {
+        CollectionView.__super__.constructor.apply(this, arguments);
+      }
+
+      return CollectionView;
+
+    })(MustacheView);
     exports.FriendSelector = (function(_super) {
 
       __extends(FriendSelector, _super);
@@ -102,6 +113,19 @@
       UserAutocomplete.prototype.template = templates.user_autocomplete;
 
       return UserAutocomplete;
+
+    })(MustacheView);
+    exports.SelectedUsers = (function(_super) {
+
+      __extends(SelectedUsers, _super);
+
+      function SelectedUsers() {
+        SelectedUsers.__super__.constructor.apply(this, arguments);
+      }
+
+      SelectedUsers.prototype.template = templates.selected_users;
+
+      return SelectedUsers;
 
     })(MustacheView);
     return exports;

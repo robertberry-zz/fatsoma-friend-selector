@@ -12,4 +12,5 @@ define ->
   exports.complement = (f) ->
     -> not f.apply(f, arguments)
 
-  exports
+  exports.last = (seq) ->
+    -> seq[seq.length-1]

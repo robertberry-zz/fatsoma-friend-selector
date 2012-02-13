@@ -28,6 +28,21 @@
           name: "Jon Roberts",
           type: "fatsoma"
         }
+      ],
+      test_models: [
+        {
+          id: 1,
+          name: "One"
+        }, {
+          id: 2,
+          name: "Two"
+        }
+      ],
+      extra_test_model: [
+        {
+          id: 3,
+          name: "Three"
+        }
       ]
     };
   });

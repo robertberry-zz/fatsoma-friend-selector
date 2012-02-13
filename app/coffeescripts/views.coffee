@@ -17,6 +17,8 @@ define ["models", "templates", "jquery", "underscore", "backbone", \
         context = {}
       $(@el).html Mustache.render(@template, context)
 
+  class CollectionView extends MustacheView
+
   # Main view
   class exports.FriendSelector extends MustacheView
     template: templates.friend_selector
@@ -54,5 +56,8 @@ define ["models", "templates", "jquery", "underscore", "backbone", \
   # Autocomplete dropdown
   class exports.UserAutocomplete extends MustacheView
     template: templates.user_autocomplete
+
+  class exports.SelectedUsers extends MustacheView
+    template: templates.selected_users
 
   exports
