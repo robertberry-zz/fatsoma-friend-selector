@@ -22,11 +22,18 @@ define ["models", "templates", "exceptions", "jquery", "underscore", \
       collection = @options["collection"]
       collection.bind "add", (model) =>
         @items.push new @item_view model: model
+        @render()
       collection.bind "remove", (model) =>
         @items = _.reject @items, (view) ->
           view.model.id == model.id
+        @render()
       @items = _(collection.models).map (model) =>
         new @item_view model: model
+
+    render: ->
+      for view in @items
+        view.render()
+        $(@el).append view.el
 
   # Main view
   class exports.FriendSelector extends exports.MustacheView

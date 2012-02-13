@@ -18,7 +18,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
 
     beforeEach ->
       class CollectionViewItemStub extends views.MustacheView
-        # pass
+        template: ""
       class CollectionViewStub extends views.CollectionView
         item_view: CollectionViewItemStub
       class ModelStub extends Backbone.Model

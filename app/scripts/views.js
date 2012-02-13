@@ -52,20 +52,34 @@
           _this = this;
         collection = this.options["collection"];
         collection.bind("add", function(model) {
-          return _this.items.push(new _this.item_view({
+          _this.items.push(new _this.item_view({
             model: model
           }));
+          return _this.render();
         });
         collection.bind("remove", function(model) {
-          return _this.items = _.reject(_this.items, function(view) {
+          _this.items = _.reject(_this.items, function(view) {
             return view.model.id === model.id;
           });
+          return _this.render();
         });
         return this.items = _(collection.models).map(function(model) {
           return new _this.item_view({
             model: model
           });
         });
+      };
+
+      CollectionView.prototype.render = function() {
+        var view, _i, _len, _ref, _results;
+        _ref = this.items;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          view.render();
+          _results.push($(this.el).append(view.el));
+        }
+        return _results;
       };
 
       return CollectionView;

@@ -19,6 +19,8 @@
             CollectionViewItemStub.__super__.constructor.apply(this, arguments);
           }
 
+          CollectionViewItemStub.prototype.template = "";
+
           return CollectionViewItemStub;
 
         })(views.MustacheView);
