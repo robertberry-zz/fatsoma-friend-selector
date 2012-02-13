@@ -2,10 +2,10 @@
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  define(["models", "templates", "jquery", "underscore", "backbone", "mustache/mustache"], function(models, templates) {
-    var CollectionView, MustacheView, exports;
+  define(["models", "templates", "exceptions", "jquery", "underscore", "backbone", "mustache/mustache"], function(models, templates, exceptions) {
+    var exports;
     exports = {};
-    MustacheView = (function(_super) {
+    exports.MustacheView = (function(_super) {
 
       __extends(MustacheView, _super);
 
@@ -39,7 +39,7 @@
       return MustacheView;
 
     })(Backbone.View);
-    CollectionView = (function(_super) {
+    exports.CollectionView = (function(_super) {
 
       __extends(CollectionView, _super);
 
@@ -47,9 +47,20 @@
         CollectionView.__super__.constructor.apply(this, arguments);
       }
 
+      CollectionView.prototype.initialize = function() {
+        if (!this.prototype.item_view) {
+          throw new exceptions.ClassDefinitionError("You must specify the " + "sub view for collection view in item_view param.");
+        }
+        return this.items = _(this.options["collection"].models).map(function(model) {
+          return new this.item_view({
+            model: model
+          });
+        });
+      };
+
       return CollectionView;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     exports.FriendSelector = (function(_super) {
 
       __extends(FriendSelector, _super);
@@ -101,7 +112,7 @@
 
       return FriendSelector;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     exports.UserAutocomplete = (function(_super) {
 
       __extends(UserAutocomplete, _super);
@@ -114,7 +125,7 @@
 
       return UserAutocomplete;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     exports.SelectedUsers = (function(_super) {
 
       __extends(SelectedUsers, _super);
@@ -127,7 +138,7 @@
 
       return SelectedUsers;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     return exports;
   });
 

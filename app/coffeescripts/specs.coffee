@@ -6,34 +6,51 @@
 # Author: Robert Berry
 # Date: February 10th 2012
 
-require ["views", "utils", "models", "fixtures", "jquery"], \
-    (views, utils, models, fixtures) ->
+require ["views", "utils", "models", "exceptions", "fixtures", "jquery"], \
+    (views, utils, models, exceptions, fixtures) ->
   describe "CollectionView", ->
     CollectionViewStub = null
     CollectionViewItemStub = null
     model_attributes = null
-    view = null
 
     beforeEach ->
-      class CollectionViewItemStub extends MustacheView
+      class CollectionViewItemStub extends views.MustacheView
         # pass
       class CollectionViewStub extends views.CollectionView
-        item_view = CollectionViewItemStub
+        @item_view = CollectionViewItemStub
       model_attributes = fixtures.test_models
-      view = new CollectionViewStub collection: model_attributes
 
-    it "should initially render sub views for all items in the collection", ->
-      expect(view.items.length).toBe model_attributes.length
-      for i in [0..model_attributes.length]
-        item = view.items[i]
-        expect(item.prototype).toBe CollectionViewItemStub
-        expect(item.model.attributes).toBe model_attributes[i]
+    describe "subclass definition", ->
+      it "should throw an error if no item view is defined", ->
+        # Construct a broken stub instead of the working one set up in
+        # beforeEach
+        class CollectionViewStub extends views.CollectionView
+          item_view = null
+        expect(-> new CollectionViewStub).toThrow \
+          new exceptions.ClassDefinitionError
 
-    it "should update the sub views to reflect the contents of the collection
-        whenever it changes", ->
-      view.collection.add fixtures.extra_test_model
-      expect(view.items.length).toBe model_attributes.length + 1
-      expect(utils.last(view.items).attributes).toBe fixtures.extra_test_model
+      it "should not throw an error if item view is defined", ->
+        expect(-> new CollectionViewStub).not.toThrow \
+          new exceptions.ClassDefinitionError
+
+    describe "sub view rendering", ->
+      view = null
+
+      beforeEach ->
+        view = new CollectionViewStub collection: model_attributes
+
+      it "should initially render sub views for all items in the collection", ->
+        expect(view.items.length).toBe model_attributes.length
+        for i in [0..model_attributes.length]
+          item = view.items[i]
+          expect(item.prototype).toBe CollectionViewItemStub
+          expect(item.model.attributes).toBe model_attributes[i]
+
+      it "should update the sub views to reflect the contents of the collection
+          whenever it changes", ->
+        view.collection.add fixtures.extra_test_model
+        expect(view.items.length).toBe model_attributes.length + 1
+        expect(utils.last(view.items).attributes).toBe fixtures.extra_test_model
 
   describe "FriendSelector", ->
     selector = null

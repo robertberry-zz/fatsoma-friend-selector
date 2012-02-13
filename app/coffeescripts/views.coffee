@@ -3,11 +3,11 @@
 # Author: Robert Berry
 # Created: 9th Feb 2012
 
-define ["models", "templates", "jquery", "underscore", "backbone", \
-    "mustache/mustache"], (models, templates) ->
+define ["models", "templates", "exceptions", "jquery", "underscore", \
+    "backbone", "mustache/mustache"], (models, templates, exceptions) ->
   exports = {}
 
-  class MustacheView extends Backbone.View
+  class exports.MustacheView extends Backbone.View
     render: ->
       if @model
         context = @model
@@ -17,10 +17,17 @@ define ["models", "templates", "jquery", "underscore", "backbone", \
         context = {}
       $(@el).html Mustache.render(@template, context)
 
-  class CollectionView extends MustacheView
+  class exports.CollectionView extends exports.MustacheView
+    initialize: ->
+      if not @::item_view
+        throw new exceptions.ClassDefinitionError("You must specify the " +
+          "sub view for collection view in item_view param.")
+
+      @items = _(@options["collection"].models).map (model) ->
+        new @item_view model: model
 
   # Main view
-  class exports.FriendSelector extends MustacheView
+  class exports.FriendSelector extends exports.MustacheView
     template: templates.friend_selector
 
     events:
@@ -54,10 +61,10 @@ define ["models", "templates", "jquery", "underscore", "backbone", \
         @$(".autocomplete").html ""
 
   # Autocomplete dropdown
-  class exports.UserAutocomplete extends MustacheView
+  class exports.UserAutocomplete extends exports.MustacheView
     template: templates.user_autocomplete
 
-  class exports.SelectedUsers extends MustacheView
+  class exports.SelectedUsers extends exports.MustacheView
     template: templates.selected_users
 
   exports
