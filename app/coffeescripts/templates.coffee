@@ -8,7 +8,7 @@ define
                    '''
   user_autocomplete: '''
                      {{#collection}}
-                        <p>{{name}}</p>
+                         <p>{{name}}</p>
                      {{/collection}}
                      '''
   user_autocomplete_item: '''

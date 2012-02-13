@@ -14,17 +14,26 @@
       }
 
       MustacheView.prototype.render = function() {
-        var context;
+        var context, model;
         if (this.model) {
           context = this.model;
         } else if (this.collection) {
           context = {
-            collection: this.collection
+            collection: (function() {
+              var _i, _len, _ref, _results;
+              _ref = this.collection.models;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                model = _ref[_i];
+                _results.push(model.attributes);
+              }
+              return _results;
+            }).call(this)
           };
         } else {
           context = {};
         }
-        return $(this.el).html(Mustache.render(this.template, this.model));
+        return $(this.el).html(Mustache.render(this.template, context));
       };
 
       return MustacheView;
@@ -41,7 +50,7 @@
       FriendSelector.prototype.template = templates.friend_selector;
 
       FriendSelector.prototype.events = {
-        "keypress .search": "render_autocomplete"
+        "keyup .search": "render_autocomplete"
       };
 
       FriendSelector.prototype.initialize = function() {

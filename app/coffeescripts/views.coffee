@@ -12,17 +12,17 @@ define ["models", "templates", "jquery", "underscore", "backbone", \
       if @model
         context = @model
       else if @collection
-        context = {collection: @collection}
+        context = {collection: model.attributes for model in @collection.models}
       else
         context = {}
-      $(@el).html Mustache.render(@template, @model)
+      $(@el).html Mustache.render(@template, context)
 
   # Main view
   class exports.FriendSelector extends MustacheView
     template: templates.friend_selector
 
     events:
-      "keypress .search": "render_autocomplete"
+      "keyup .search": "render_autocomplete"
 
     initialize: ->
       @friends = @options["friends"]

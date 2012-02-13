@@ -45,7 +45,7 @@ require ["views", "utils", "models", "fixtures", "jquery"], \
         # is to do with the the original method being wrapped in a function and
         # that the event triggers the wrapped function, not the wrapper
         selector.delegateEvents()
-        search_box.keypress()
+        search_box.keyup()
         expect(selector.render_autocomplete).toHaveBeenCalled()
 
     describe "autocomplete dropdown", ->

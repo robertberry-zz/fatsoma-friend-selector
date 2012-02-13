@@ -45,7 +45,7 @@
         return it("should render the autocomplete dropdown when input changes", function() {
           spyOn(selector, "render_autocomplete");
           selector.delegateEvents();
-          search_box.keypress();
+          search_box.keyup();
           return expect(selector.render_autocomplete).toHaveBeenCalled();
         });
       });
