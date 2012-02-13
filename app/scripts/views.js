@@ -48,11 +48,21 @@
       }
 
       CollectionView.prototype.initialize = function() {
-        if (!this.prototype.item_view) {
-          throw new exceptions.ClassDefinitionError("You must specify the " + "sub view for collection view in item_view param.");
-        }
-        return this.items = _(this.options["collection"].models).map(function(model) {
-          return new this.item_view({
+        var collection,
+          _this = this;
+        collection = this.options["collection"];
+        collection.bind("add", function(model) {
+          return _this.items.push(new _this.item_view({
+            model: model
+          }));
+        });
+        collection.bind("remove", function(model) {
+          return _this.items = _.reject(_this.items, function(view) {
+            return view.model.id === model.id;
+          });
+        });
+        return this.items = _(collection.models).map(function(model) {
+          return new _this.item_view({
             model: model
           });
         });

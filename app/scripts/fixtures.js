@@ -38,12 +38,10 @@
           name: "Two"
         }
       ],
-      extra_test_model: [
-        {
-          id: 3,
-          name: "Three"
-        }
-      ]
+      extra_test_model: {
+        id: 3,
+        name: "Three"
+      }
     };
   });
 

@@ -17,6 +17,9 @@ define ->
 
   # Returns the last element of a sequence
   exports.last = (seq) ->
-    -> seq[seq.length-1]
+    seq[seq.length-1]
+
+  exports.first = (seq) ->
+    seq[0]
 
   exports

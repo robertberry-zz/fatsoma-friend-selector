@@ -12,9 +12,10 @@
       };
     };
     exports.last = function(seq) {
-      return function() {
-        return seq[seq.length - 1];
-      };
+      return seq[seq.length - 1];
+    };
+    exports.first = function(seq) {
+      return seq[0];
     };
     return exports;
   });

@@ -19,11 +19,13 @@ define ["models", "templates", "exceptions", "jquery", "underscore", \
 
   class exports.CollectionView extends exports.MustacheView
     initialize: ->
-      if not @::item_view
-        throw new exceptions.ClassDefinitionError("You must specify the " +
-          "sub view for collection view in item_view param.")
-
-      @items = _(@options["collection"].models).map (model) ->
+      collection = @options["collection"]
+      collection.bind "add", (model) =>
+        @items.push new @item_view model: model
+      collection.bind "remove", (model) =>
+        @items = _.reject @items, (view) ->
+          view.model.id == model.id
+      @items = _(collection.models).map (model) =>
         new @item_view model: model
 
   # Main view

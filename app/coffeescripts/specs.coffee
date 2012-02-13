@@ -6,51 +6,53 @@
 # Author: Robert Berry
 # Date: February 10th 2012
 
-require ["views", "utils", "models", "exceptions", "fixtures", "jquery"], \
+require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
+    "underscore", "backbone"], \
     (views, utils, models, exceptions, fixtures) ->
   describe "CollectionView", ->
     CollectionViewStub = null
     CollectionViewItemStub = null
+    ModelStub = null
+    CollectionStub = null
     model_attributes = null
 
     beforeEach ->
       class CollectionViewItemStub extends views.MustacheView
         # pass
       class CollectionViewStub extends views.CollectionView
-        @item_view = CollectionViewItemStub
+        item_view: CollectionViewItemStub
+      class ModelStub extends Backbone.Model
+        # pass
+      class CollectionStub extends Backbone.Collection
+        model: ModelStub
       model_attributes = fixtures.test_models
-
-    describe "subclass definition", ->
-      it "should throw an error if no item view is defined", ->
-        # Construct a broken stub instead of the working one set up in
-        # beforeEach
-        class CollectionViewStub extends views.CollectionView
-          item_view = null
-        expect(-> new CollectionViewStub).toThrow \
-          new exceptions.ClassDefinitionError
-
-      it "should not throw an error if item view is defined", ->
-        expect(-> new CollectionViewStub).not.toThrow \
-          new exceptions.ClassDefinitionError
 
     describe "sub view rendering", ->
       view = null
 
       beforeEach ->
-        view = new CollectionViewStub collection: model_attributes
+        view = new CollectionViewStub
+          collection: new CollectionStub model_attributes
 
       it "should initially render sub views for all items in the collection", ->
         expect(view.items.length).toBe model_attributes.length
-        for i in [0..model_attributes.length]
+        for i in [0..model_attributes.length-1]
           item = view.items[i]
-          expect(item.prototype).toBe CollectionViewItemStub
-          expect(item.model.attributes).toBe model_attributes[i]
+          expect(item.model.attributes).toEqual model_attributes[i]
 
-      it "should update the sub views to reflect the contents of the collection
-          whenever it changes", ->
+      it "should add a new sub view when a new item is added to the
+          collection", ->
         view.collection.add fixtures.extra_test_model
         expect(view.items.length).toBe model_attributes.length + 1
-        expect(utils.last(view.items).attributes).toBe fixtures.extra_test_model
+        expect(utils.last(view.items).model.attributes).toEqual \
+          fixtures.extra_test_model
+
+      it "should remove the sub view when an item is removed from the
+          collection", ->
+        view.collection.remove view.collection.models[0]
+        expect(view.items.length).toBe model_attributes.length - 1
+        expect(utils.first(view.items).model.attributes).toEqual \
+          model_attributes[1]
 
   describe "FriendSelector", ->
     selector = null

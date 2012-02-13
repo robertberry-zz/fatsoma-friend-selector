@@ -2,11 +2,13 @@
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  require(["views", "utils", "models", "exceptions", "fixtures", "jquery"], function(views, utils, models, exceptions, fixtures) {
+  require(["views", "utils", "models", "exceptions", "fixtures", "jquery", "underscore", "backbone"], function(views, utils, models, exceptions, fixtures) {
     describe("CollectionView", function() {
-      var CollectionViewItemStub, CollectionViewStub, model_attributes;
+      var CollectionStub, CollectionViewItemStub, CollectionViewStub, ModelStub, model_attributes;
       CollectionViewStub = null;
       CollectionViewItemStub = null;
+      ModelStub = null;
+      CollectionStub = null;
       model_attributes = null;
       beforeEach(function() {
         CollectionViewItemStub = (function(_super) {
@@ -28,62 +30,64 @@
             CollectionViewStub.__super__.constructor.apply(this, arguments);
           }
 
-          CollectionViewStub.item_view = CollectionViewItemStub;
+          CollectionViewStub.prototype.item_view = CollectionViewItemStub;
 
           return CollectionViewStub;
 
         })(views.CollectionView);
+        ModelStub = (function(_super) {
+
+          __extends(ModelStub, _super);
+
+          function ModelStub() {
+            ModelStub.__super__.constructor.apply(this, arguments);
+          }
+
+          return ModelStub;
+
+        })(Backbone.Model);
+        CollectionStub = (function(_super) {
+
+          __extends(CollectionStub, _super);
+
+          function CollectionStub() {
+            CollectionStub.__super__.constructor.apply(this, arguments);
+          }
+
+          CollectionStub.prototype.model = ModelStub;
+
+          return CollectionStub;
+
+        })(Backbone.Collection);
         return model_attributes = fixtures.test_models;
-      });
-      describe("subclass definition", function() {
-        it("should throw an error if no item view is defined", function() {
-          CollectionViewStub = (function(_super) {
-            var item_view;
-
-            __extends(CollectionViewStub, _super);
-
-            function CollectionViewStub() {
-              CollectionViewStub.__super__.constructor.apply(this, arguments);
-            }
-
-            item_view = null;
-
-            return CollectionViewStub;
-
-          })(views.CollectionView);
-          return expect(function() {
-            return new CollectionViewStub;
-          }).toThrow(new exceptions.ClassDefinitionError);
-        });
-        return it("should not throw an error if item view is defined", function() {
-          return expect(function() {
-            return new CollectionViewStub;
-          }).not.toThrow(new exceptions.ClassDefinitionError);
-        });
       });
       return describe("sub view rendering", function() {
         var view;
         view = null;
         beforeEach(function() {
           return view = new CollectionViewStub({
-            collection: model_attributes
+            collection: new CollectionStub(model_attributes)
           });
         });
         it("should initially render sub views for all items in the collection", function() {
           var i, item, _ref, _results;
           expect(view.items.length).toBe(model_attributes.length);
           _results = [];
-          for (i = 0, _ref = model_attributes.length; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+          for (i = 0, _ref = model_attributes.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
             item = view.items[i];
-            expect(item.prototype).toBe(CollectionViewItemStub);
-            _results.push(expect(item.model.attributes).toBe(model_attributes[i]));
+            _results.push(expect(item.model.attributes).toEqual(model_attributes[i]));
           }
           return _results;
         });
-        return it("should update the sub views to reflect the contents of the collection          whenever it changes", function() {
+        it("should add a new sub view when a new item is added to the          collection", function() {
           view.collection.add(fixtures.extra_test_model);
           expect(view.items.length).toBe(model_attributes.length + 1);
-          return expect(utils.last(view.items).attributes).toBe(fixtures.extra_test_model);
+          return expect(utils.last(view.items).model.attributes).toEqual(fixtures.extra_test_model);
+        });
+        return it("should remove the sub view when an item is removed from the          collection", function() {
+          view.collection.remove(view.collection.models[0]);
+          expect(view.items.length).toBe(model_attributes.length - 1);
+          return expect(utils.first(view.items).model.attributes).toEqual(model_attributes[1]);
         });
       });
     });
