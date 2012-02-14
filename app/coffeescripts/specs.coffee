@@ -160,6 +160,14 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
             for id in _(unmatched_friends).pluck "id"
               expect(collection_ids).not.toContain id
 
+        describe "when an item is selected", ->
+          it "should fire the select event with the proper model", ->
+            callback = jasmine.createSpy()
+            view.on "select", callback
+            first_sub_view = view.items[0]
+            first_sub_view.$el.click()
+            expect(callback).toHaveBeenCalledWith(first_sub_view.model)
+
         describe "the html", ->
           it "should contain the names of all the matched users", ->
             for user in view.collection.models
@@ -172,5 +180,3 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
       beforeEach ->
         list = selector.$('.selected')
 
-      afterEach ->
-        list = null

@@ -61,6 +61,7 @@
       };
 
       CollectionView.prototype.addModel = function(model) {
+        this.trigger("add", model);
         this.items.push(new this.item_view({
           model: model
         }));
@@ -68,6 +69,7 @@
       };
 
       CollectionView.prototype.removeModel = function(model) {
+        this.trigger("remove", model);
         this.items = _.reject(this.items, function(view) {
           return view.model.id === model.id;
         });
@@ -150,7 +152,15 @@
         UserAutocompleteItem.__super__.constructor.apply(this, arguments);
       }
 
+      UserAutocompleteItem.prototype.events = {
+        "click": "onClick"
+      };
+
       UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
+
+      UserAutocompleteItem.prototype.onClick = function(event) {
+        return this.trigger("select", this.model);
+      };
 
       return UserAutocompleteItem;
 
@@ -164,6 +174,23 @@
       }
 
       UserAutocomplete.prototype.item_view = exports.UserAutocompleteItem;
+
+      UserAutocomplete.prototype.initialize = function() {
+        var select;
+        UserAutocomplete.__super__.initialize.apply(this, arguments);
+        select = _.bind(this.select, this);
+        _(this.items).invoke("on", "select", select);
+        this.on("add", function(subView) {
+          return subView.on("select", select);
+        });
+        return this.on("remove", function(subView) {
+          return subView.off("select", select);
+        });
+      };
+
+      UserAutocomplete.prototype.select = function(model) {
+        return this.trigger("select", model);
+      };
 
       return UserAutocomplete;
 

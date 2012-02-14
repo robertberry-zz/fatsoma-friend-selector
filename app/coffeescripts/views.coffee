@@ -26,10 +26,12 @@ define ["models", "templates", "exceptions", "jquery", "underscore", \
         new @item_view model: model
 
     addModel: (model) ->
+      @trigger "add", model
       @items.push new @item_view model: model
       @render()
 
     removeModel: (model) ->
+      @trigger "remove", model
       @items = _.reject @items, (view) ->
         view.model.id == model.id
       @render()
@@ -75,11 +77,28 @@ define ["models", "templates", "exceptions", "jquery", "underscore", \
         @$(".autocomplete").html ""
 
   class exports.UserAutocompleteItem extends exports.MustacheView
+    events:
+      "click": "onClick"
+
     template: templates.user_autocomplete_item
+
+    # When clicked fires an event saying the given user has been selected
+    onClick: (event) ->
+      @trigger "select", @model
 
   # Autocomplete dropdown
   class exports.UserAutocomplete extends exports.CollectionView
     item_view: exports.UserAutocompleteItem
+
+    initialize: ->
+      super
+      select = _.bind(@select, @)
+      _(@items).invoke "on", "select", select
+      @on "add", (subView) -> subView.on "select", select
+      @on "remove", (subView) -> subView.off "select", select
+
+    select: (model) ->
+      @trigger "select", model
 
   class exports.SelectedUsers extends exports.MustacheView
     template: templates.selected_users

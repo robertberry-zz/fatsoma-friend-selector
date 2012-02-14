@@ -217,6 +217,16 @@
               return _results;
             });
           });
+          describe("when an item is selected", function() {
+            return it("should fire the select event with the proper model", function() {
+              var callback, first_sub_view;
+              callback = jasmine.createSpy();
+              view.on("select", callback);
+              first_sub_view = view.items[0];
+              first_sub_view.$el.click();
+              return expect(callback).toHaveBeenCalledWith(first_sub_view.model);
+            });
+          });
           return describe("the html", function() {
             return it("should contain the names of all the matched users", function() {
               var name, user, _i, _len, _ref, _results;
@@ -235,11 +245,8 @@
       return describe("selected list", function() {
         var list;
         list = null;
-        beforeEach(function() {
+        return beforeEach(function() {
           return list = selector.$('.selected');
-        });
-        return afterEach(function() {
-          return list = null;
         });
       });
     });
