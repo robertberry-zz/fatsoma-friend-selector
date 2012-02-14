@@ -11,11 +11,13 @@
         return !f.apply(f, arguments);
       };
     };
-    return exports.last = function(seq) {
-      return function() {
-        return seq[seq.length - 1];
-      };
+    exports.last = function(seq) {
+      return seq[seq.length - 1];
     };
+    exports.first = function(seq) {
+      return seq[0];
+    };
+    return exports;
   });
 
 }).call(this);

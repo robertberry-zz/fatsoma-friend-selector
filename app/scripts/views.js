@@ -2,10 +2,10 @@
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  define(["models", "templates", "jquery", "underscore", "backbone", "mustache/mustache"], function(models, templates) {
-    var CollectionView, MustacheView, exports;
+  define(["models", "templates", "exceptions", "jquery", "underscore", "backbone", "mustache/mustache"], function(models, templates, exceptions) {
+    var exports;
     exports = {};
-    MustacheView = (function(_super) {
+    exports.MustacheView = (function(_super) {
 
       __extends(MustacheView, _super);
 
@@ -39,7 +39,7 @@
       return MustacheView;
 
     })(Backbone.View);
-    CollectionView = (function(_super) {
+    exports.CollectionView = (function(_super) {
 
       __extends(CollectionView, _super);
 
@@ -47,9 +47,44 @@
         CollectionView.__super__.constructor.apply(this, arguments);
       }
 
+      CollectionView.prototype.initialize = function() {
+        var collection,
+          _this = this;
+        collection = this.options["collection"];
+        collection.bind("add", function(model) {
+          _this.items.push(new _this.item_view({
+            model: model
+          }));
+          return _this.render();
+        });
+        collection.bind("remove", function(model) {
+          _this.items = _.reject(_this.items, function(view) {
+            return view.model.id === model.id;
+          });
+          return _this.render();
+        });
+        return this.items = _(collection.models).map(function(model) {
+          return new _this.item_view({
+            model: model
+          });
+        });
+      };
+
+      CollectionView.prototype.render = function() {
+        var view, _i, _len, _ref, _results;
+        _ref = this.items;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          view.render();
+          _results.push($(this.el).append(view.el));
+        }
+        return _results;
+      };
+
       return CollectionView;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     exports.FriendSelector = (function(_super) {
 
       __extends(FriendSelector, _super);
@@ -101,7 +136,7 @@
 
       return FriendSelector;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     exports.UserAutocomplete = (function(_super) {
 
       __extends(UserAutocomplete, _super);
@@ -114,7 +149,7 @@
 
       return UserAutocomplete;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     exports.SelectedUsers = (function(_super) {
 
       __extends(SelectedUsers, _super);
@@ -127,7 +162,7 @@
 
       return SelectedUsers;
 
-    })(MustacheView);
+    })(exports.MustacheView);
     return exports;
   });
 
