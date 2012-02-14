@@ -42,6 +42,17 @@
       return ClassDefinitionError;
 
     })(exports.Exception);
+    exports.InstantiationError = (function(_super) {
+
+      __extends(InstantiationError, _super);
+
+      function InstantiationError() {
+        InstantiationError.__super__.constructor.apply(this, arguments);
+      }
+
+      return InstantiationError;
+
+    })(exports.Exception);
     return exports;
   });
 

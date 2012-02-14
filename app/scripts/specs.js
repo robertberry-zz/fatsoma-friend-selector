@@ -203,7 +203,7 @@
               }
               return _results;
             });
-            return it("should not list any of the user's friends whose names do not              contain the search term", function() {
+            it("should not list any of the user's friends whose names do not              contain the search term", function() {
               var collection_ids, id, match_not_search_term, unmatched_friends, _i, _len, _ref, _results;
               match_not_search_term = utils.complement(match_search_term);
               unmatched_friends = _(fixtures.friends).filter(match_not_search_term);
@@ -215,6 +215,12 @@
                 _results.push(expect(collection_ids).not.toContain(id));
               }
               return _results;
+            });
+            return it("should match one user exactly when the full name is given", function() {
+              selector.set_search_term(selector.friends.models[0].attributes.name);
+              view = selector.autocomplete;
+              expect(view.collection.length).toBe(1);
+              return expect(view.collection.models[0].attributes).toEqual(fixtures.friends[0]);
             });
           });
           describe("when an item is selected", function() {
@@ -243,10 +249,19 @@
         });
       });
       return describe("selected list", function() {
-        var list;
+        var list, selected;
         list = null;
-        return beforeEach(function() {
-          return list = selector.$('.selected');
+        selected = null;
+        beforeEach(function() {
+          list = selector.$('.selected');
+          return selected = selector.selected;
+        });
+        return it("should remove selected items from the autocomplete dropdown", function() {
+          var first_friend;
+          first_friend = selector.friends.models[0];
+          selected.add_model(first_friend);
+          selector.set_search_term(first_friend.attributes.name);
+          return expect(selector.autocomplete.collection.models).not.toContain(first_friend);
         });
       });
     });

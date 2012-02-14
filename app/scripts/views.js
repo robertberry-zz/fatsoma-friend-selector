@@ -51,8 +51,11 @@
         var collection,
           _this = this;
         collection = this.options["collection"];
-        collection.bind("add", _.bind(this.addModel, this));
-        collection.bind("remove", _.bind(this.removeModel, this));
+        if (!collection) {
+          throw new exceptions.InstantiationError("CollectionView must be " + "initialized with a collection.");
+        }
+        collection.bind("add", _.bind(this.add_model, this));
+        collection.bind("remove", _.bind(this.remove_model, this));
         return this.items = _(collection.models).map(function(model) {
           return new _this.item_view({
             model: model
@@ -60,7 +63,11 @@
         });
       };
 
-      CollectionView.prototype.addModel = function(model) {
+      CollectionView.prototype.add_model = function(model) {
+        if (!this.collection.include(model)) {
+          this.collection.add(model);
+          return;
+        }
         this.trigger("add", model);
         this.items.push(new this.item_view({
           model: model
@@ -68,7 +75,11 @@
         return this.render();
       };
 
-      CollectionView.prototype.removeModel = function(model) {
+      CollectionView.prototype.remove_model = function(model) {
+        if (this.collection.include(model)) {
+          this.collection.remove(model);
+          return;
+        }
         this.trigger("remove", model);
         this.items = _.reject(this.items, function(view) {
           return view.model.id === model.id;
@@ -107,7 +118,16 @@
       };
 
       FriendSelector.prototype.initialize = function() {
-        return this.friends = this.options["friends"];
+        var selected_friends;
+        this.friends = this.options["friends"];
+        selected_friends = new models.Users(this.options["selected"]);
+        this.selected = new exports.SelectedUsers({
+          collection: selected_friends
+        });
+        this.selected.render();
+        this.remaining_friends = new models.Users(this.friends.without(selected_friends.models));
+        selected_friends.on("add", _.bind(this.remaining_friends.remove, this.remaining_friends));
+        return selected_friends.on("remove", _.bind(this.remaining_friends.add, this.remaining_friends));
       };
 
       FriendSelector.prototype.search_term = function() {
@@ -120,25 +140,37 @@
       };
 
       FriendSelector.prototype.render_autocomplete = function() {
-        var matched, term,
+        var matched, terms,
           _this = this;
         if (this.search_term()) {
-          term = this.search_term().toLowerCase();
-          matched = this.friends.filter(function(user) {
-            var names;
-            names = user.get("name").split(/\s+/);
-            return _(names).any(function(name) {
-              return name.toLowerCase().indexOf(term) === 0;
+          terms = this.search_term().toLowerCase().split(/\s+/);
+          matched = this.remaining_friends.filter(function(user) {
+            return _(terms).all(function(term) {
+              var names;
+              names = user.get("name").split(/\s+/);
+              return _(names).any(function(name) {
+                return name.toLowerCase().indexOf(term) === 0;
+              });
             });
           });
           this.autocomplete = new exports.UserAutocomplete({
             collection: new models.Users(matched)
           });
           this.autocomplete.render();
+          this.autocomplete.on("select", _.bind(this.select_user, this));
           return this.$(".autocomplete").html(this.autocomplete.el);
         } else {
           return this.$(".autocomplete").html("");
         }
+      };
+
+      FriendSelector.prototype.select_user = function(user) {
+        return this.selected.add_model(user);
+      };
+
+      FriendSelector.prototype.render = function() {
+        FriendSelector.__super__.render.apply(this, arguments);
+        return this.$(".selected").html(this.selected.el);
       };
 
       return FriendSelector;
@@ -153,12 +185,12 @@
       }
 
       UserAutocompleteItem.prototype.events = {
-        "click": "onClick"
+        "click": "on_click"
       };
 
       UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
 
-      UserAutocompleteItem.prototype.onClick = function(event) {
+      UserAutocompleteItem.prototype.on_click = function(event) {
         return this.trigger("select", this.model);
       };
 
@@ -195,6 +227,19 @@
       return UserAutocomplete;
 
     })(exports.CollectionView);
+    exports.SelectedUsersItem = (function(_super) {
+
+      __extends(SelectedUsersItem, _super);
+
+      function SelectedUsersItem() {
+        SelectedUsersItem.__super__.constructor.apply(this, arguments);
+      }
+
+      SelectedUsersItem.prototype.template = templates.selected_users_item;
+
+      return SelectedUsersItem;
+
+    })(exports.MustacheView);
     exports.SelectedUsers = (function(_super) {
 
       __extends(SelectedUsers, _super);
@@ -203,11 +248,11 @@
         SelectedUsers.__super__.constructor.apply(this, arguments);
       }
 
-      SelectedUsers.prototype.template = templates.selected_users;
+      SelectedUsers.prototype.item_view = exports.SelectedUsersItem;
 
       return SelectedUsers;
 
-    })(exports.MustacheView);
+    })(exports.CollectionView);
     return exports;
   });
 

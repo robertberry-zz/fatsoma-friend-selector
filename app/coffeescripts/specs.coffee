@@ -148,7 +148,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
           it "should list all of the user's friends one of whose names begin with
               the search term", ->
             matched_friends = _(fixtures.friends).filter match_search_term
-            collection_ids = view.collection.pluck("id")
+            collection_ids = view.collection.pluck "id"
             for id in _(matched_friends).pluck "id"
               expect(collection_ids).toContain id
 
@@ -159,6 +159,13 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
             collection_ids = view.collection.pluck "id"
             for id in _(unmatched_friends).pluck "id"
               expect(collection_ids).not.toContain id
+
+          it "should match one user exactly when the full name is given", ->
+            selector.set_search_term selector.friends.models[0].attributes.name
+            view = selector.autocomplete
+            expect(view.collection.length).toBe 1
+            expect(view.collection.models[0].attributes).toEqual \
+              fixtures.friends[0]
 
         describe "when an item is selected", ->
           it "should fire the select event with the proper model", ->
@@ -176,7 +183,14 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
 
     describe "selected list", ->
       list = null
+      selected = null
 
       beforeEach ->
         list = selector.$('.selected')
+        selected = selector.selected
 
+      it "should remove selected items from the autocomplete dropdown", ->
+        first_friend = selector.friends.models[0]
+        selected.add_model first_friend
+        selector.set_search_term first_friend.attributes.name
+        expect(selector.autocomplete.collection.models).not.toContain first_friend
