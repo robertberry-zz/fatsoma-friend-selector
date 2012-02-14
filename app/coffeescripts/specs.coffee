@@ -35,6 +35,11 @@ require ["views", "utils", "models", "fixtures", "jquery"], \
       expect(view.items.length).toBe model_attributes.length + 1
       expect(utils.last(view.items).attributes).toBe fixtures.extra_test_model
 
+    it "should contain the root elements of all its sub views", ->
+      view.render()
+      for sub_view in view.items
+        expect($(view.el).contains(sub_view.el)).toBeTruthy()
+
   describe "FriendSelector", ->
     selector = null
     elem = null

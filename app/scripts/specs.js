@@ -51,10 +51,21 @@
         }
         return _results;
       });
-      return it("should update the sub views to reflect the contents of the collection        whenever it changes", function() {
+      it("should update the sub views to reflect the contents of the collection        whenever it changes", function() {
         view.collection.add(fixtures.extra_test_model);
         expect(view.items.length).toBe(model_attributes.length + 1);
         return expect(utils.last(view.items).attributes).toBe(fixtures.extra_test_model);
+      });
+      return it("should contain the root elements of all its sub views", function() {
+        var sub_view, _i, _len, _ref, _results;
+        view.render();
+        _ref = view.items;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          sub_view = _ref[_i];
+          _results.push(expect($(view.el).contains(sub_view.el)).toBeTruthy());
+        }
+        return _results;
       });
     });
     return describe("FriendSelector", function() {
