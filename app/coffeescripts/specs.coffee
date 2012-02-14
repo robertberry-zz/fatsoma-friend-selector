@@ -6,9 +6,9 @@
 # Author: Robert Berry
 # Date: February 10th 2012
 
-require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
-    "underscore", "backbone"], \
-    (views, utils, models, exceptions, fixtures) ->
+require ["views", "utils", "models", "exceptions", "fixtures", \
+    "backbone_extensions", "jquery", "underscore", "backbone"], \
+    (views, utils, models, exceptions, fixtures, extensions) ->
   describe "CollectionView", ->
     CollectionViewStub = null
     CollectionViewItemStub = null
@@ -17,9 +17,9 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
     model_attributes = null
 
     beforeEach ->
-      class CollectionViewItemStub extends views.MustacheView
+      class CollectionViewItemStub extends extensions.MustacheView
         template: ""
-      class CollectionViewStub extends views.CollectionView
+      class CollectionViewStub extends extensions.CollectionView
         item_view: CollectionViewItemStub
       class ModelStub extends Backbone.Model
         # pass
