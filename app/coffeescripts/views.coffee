@@ -27,6 +27,17 @@ define ["models", "templates", "exceptions", "backbone_extensions"], \
       selected_friends.on "remove", _.bind(@remaining_friends.add, \
         @remaining_friends)
 
+    # Repositions the dropdown so it's absolutely positioned below the search
+    # input. This has to be done with calculated values via JavaScript.
+    position_dropdown: ->
+      dropdown = @$('.autocomplete')
+      search_input = @$('input.search')
+      {top, left} = dropdown.offset()
+      dropdown.css "position", "absolute"
+      dropdown.css "top", top
+      dropdown.css "left", left
+      dropdown.css "width", search_input.css "width"
+
     # The current search term
     search_term: ->
       @$(".search").val() || ""
@@ -48,19 +59,21 @@ define ["models", "templates", "exceptions", "backbone_extensions"], \
               name.toLowerCase().indexOf(term) == 0
         @autocomplete = new exports.UserAutocomplete
           collection: new models.Users matched
-        @autocomplete.render()
-        @autocomplete.on "select", _.bind(@select_user, @)
         @$(".autocomplete").html @autocomplete.el
+        @autocomplete.on "select", _.bind(@select_user, @)
+        @autocomplete.render()
       else
         @$(".autocomplete").html ""
 
     select_user: (user) ->
       @selected.add_model user
+      @$(".search").val ""
       @render_autocomplete()
 
     render: ->
       super
       @$(".selected").html @selected.el
+      @position_dropdown()
 
   class exports.UserAutocompleteItem extends extensions.MustacheView
     events:

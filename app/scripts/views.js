@@ -32,6 +32,17 @@
         return selected_friends.on("remove", _.bind(this.remaining_friends.add, this.remaining_friends));
       };
 
+      FriendSelector.prototype.position_dropdown = function() {
+        var dropdown, left, search_input, top, _ref;
+        dropdown = this.$('.autocomplete');
+        search_input = this.$('input.search');
+        _ref = dropdown.offset(), top = _ref.top, left = _ref.left;
+        dropdown.css("position", "absolute");
+        dropdown.css("top", top);
+        dropdown.css("left", left);
+        return dropdown.css("width", search_input.css("width"));
+      };
+
       FriendSelector.prototype.search_term = function() {
         return this.$(".search").val() || "";
       };
@@ -58,9 +69,9 @@
           this.autocomplete = new exports.UserAutocomplete({
             collection: new models.Users(matched)
           });
-          this.autocomplete.render();
+          this.$(".autocomplete").html(this.autocomplete.el);
           this.autocomplete.on("select", _.bind(this.select_user, this));
-          return this.$(".autocomplete").html(this.autocomplete.el);
+          return this.autocomplete.render();
         } else {
           return this.$(".autocomplete").html("");
         }
@@ -68,12 +79,14 @@
 
       FriendSelector.prototype.select_user = function(user) {
         this.selected.add_model(user);
+        this.$(".search").val("");
         return this.render_autocomplete();
       };
 
       FriendSelector.prototype.render = function() {
         FriendSelector.__super__.render.apply(this, arguments);
-        return this.$(".selected").html(this.selected.el);
+        this.$(".selected").html(this.selected.el);
+        return this.position_dropdown();
       };
 
       return FriendSelector;
