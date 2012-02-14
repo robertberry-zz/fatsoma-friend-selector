@@ -63,7 +63,7 @@
         })(Backbone.Collection);
         return model_attributes = fixtures.test_models;
       });
-      describe("sub view rendering", function() {
+      return describe("sub view rendering", function() {
         var view;
         view = null;
         beforeEach(function() {
@@ -86,22 +86,22 @@
           expect(view.items.length).toBe(model_attributes.length + 1);
           return expect(utils.last(view.items).model.attributes).toEqual(fixtures.extra_test_model);
         });
-        return it("should remove the sub view when an item is removed from the          collection", function() {
+        it("should remove the sub view when an item is removed from the          collection", function() {
           view.collection.remove(view.collection.models[0]);
           expect(view.items.length).toBe(model_attributes.length - 1);
           return expect(utils.first(view.items).model.attributes).toEqual(model_attributes[1]);
         });
-      });
-      return it("should contain the root elements of all its sub views", function() {
-        var sub_view, _i, _len, _ref, _results;
-        view.render();
-        _ref = view.items;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          sub_view = _ref[_i];
-          _results.push(expect($(view.el).contains(sub_view.el)).toBeTruthy());
-        }
-        return _results;
+        return it("should contain the root elements of all its sub views", function() {
+          var sub_view, _i, _len, _ref, _results;
+          view.render();
+          _ref = view.items;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            sub_view = _ref[_i];
+            _results.push(expect($.contains(view.el, sub_view.el)).toBeTruthy());
+          }
+          return _results;
+        });
       });
     });
     return describe("FriendSelector", function() {

@@ -7,12 +7,10 @@ define
                      <input type="submit" value="Create Party" />
                    '''
   user_autocomplete: '''
-                     {{#collection}}
-                         <p>{{name}}</p>
-                     {{/collection}}
+                     <p>Not used ... or is it?!</p>
                      '''
   user_autocomplete_item: '''
-                          <p>DONGS</p>
+                          <p>{{name}}</p>
                           '''
   selected_users: '''
                   {{#collection}}

@@ -16,7 +16,7 @@
       MustacheView.prototype.render = function() {
         var context, model;
         if (this.model) {
-          context = this.model;
+          context = this.model.attributes;
         } else if (this.collection) {
           context = {
             collection: (function() {
@@ -33,7 +33,7 @@
         } else {
           context = {};
         }
-        return $(this.el).html(Mustache.render(this.template, context));
+        return this.$el.html(Mustache.render(this.template, context));
       };
 
       return MustacheView;
@@ -51,18 +51,8 @@
         var collection,
           _this = this;
         collection = this.options["collection"];
-        collection.bind("add", function(model) {
-          _this.items.push(new _this.item_view({
-            model: model
-          }));
-          return _this.render();
-        });
-        collection.bind("remove", function(model) {
-          _this.items = _.reject(_this.items, function(view) {
-            return view.model.id === model.id;
-          });
-          return _this.render();
-        });
+        collection.bind("add", _.bind(this.addModel, this));
+        collection.bind("remove", _.bind(this.removeModel, this));
         return this.items = _(collection.models).map(function(model) {
           return new _this.item_view({
             model: model
@@ -70,21 +60,36 @@
         });
       };
 
+      CollectionView.prototype.addModel = function(model) {
+        this.items.push(new this.item_view({
+          model: model
+        }));
+        return this.render();
+      };
+
+      CollectionView.prototype.removeModel = function(model) {
+        this.items = _.reject(this.items, function(view) {
+          return view.model.id === model.id;
+        });
+        return this.render();
+      };
+
       CollectionView.prototype.render = function() {
         var view, _i, _len, _ref, _results;
+        this.$el.html("");
         _ref = this.items;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           view = _ref[_i];
           view.render();
-          _results.push($(this.el).append(view.el));
+          _results.push(this.$el.append(view.el));
         }
         return _results;
       };
 
       return CollectionView;
 
-    })(exports.MustacheView);
+    })(Backbone.View);
     exports.FriendSelector = (function(_super) {
 
       __extends(FriendSelector, _super);
@@ -137,6 +142,19 @@
       return FriendSelector;
 
     })(exports.MustacheView);
+    exports.UserAutocompleteItem = (function(_super) {
+
+      __extends(UserAutocompleteItem, _super);
+
+      function UserAutocompleteItem() {
+        UserAutocompleteItem.__super__.constructor.apply(this, arguments);
+      }
+
+      UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
+
+      return UserAutocompleteItem;
+
+    })(exports.MustacheView);
     exports.UserAutocomplete = (function(_super) {
 
       __extends(UserAutocomplete, _super);
@@ -145,11 +163,11 @@
         UserAutocomplete.__super__.constructor.apply(this, arguments);
       }
 
-      UserAutocomplete.prototype.template = templates.user_autocomplete;
+      UserAutocomplete.prototype.item_view = exports.UserAutocompleteItem;
 
       return UserAutocomplete;
 
-    })(exports.MustacheView);
+    })(exports.CollectionView);
     exports.SelectedUsers = (function(_super) {
 
       __extends(SelectedUsers, _super);

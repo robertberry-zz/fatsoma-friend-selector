@@ -54,10 +54,10 @@ require ["views", "utils", "models", "exceptions", "fixtures", "jquery", \
         expect(utils.first(view.items).model.attributes).toEqual \
           model_attributes[1]
 
-    it "should contain the root elements of all its sub views", ->
-      view.render()
-      for sub_view in view.items
-        expect($(view.el).contains(sub_view.el)).toBeTruthy()
+      it "should contain the root elements of all its sub views", ->
+        view.render()
+        for sub_view in view.items
+          expect($.contains(view.el, sub_view.el)).toBeTruthy()
 
   describe "FriendSelector", ->
     selector = null
