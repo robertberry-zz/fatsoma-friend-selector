@@ -15,14 +15,16 @@ define ->
   exports.complement = (f) ->
     -> not f.apply(f, arguments)
 
-  # Returns the last element of a sequence
-  exports.last = (seq) ->
-    seq[seq.length-1]
-
-  exports.first = (seq) ->
-    seq[0]
-
+  # Some common key codes
   exports.keyCodes =
+    KEY_BACKSPACE: 8
+    KEY_TAB: 9
+    KEY_ENTER: 13
+    KEY_SHIFT: 16
+    KEY_CTRL: 17
+    KEY_ALT: 18
+    KEY_ESCAPE: 27
+    KEY_DELETE: 46
     KEY_LEFT: 37
     KEY_UP: 38
     KEY_RIGHT: 39

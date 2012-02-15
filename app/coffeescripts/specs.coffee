@@ -44,14 +44,14 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
           collection", ->
         view.collection.add fixtures.extra_test_model
         expect(view.items.length).toBe model_attributes.length + 1
-        expect(utils.last(view.items).model.attributes).toEqual \
+        expect(_.last(view.items).model.attributes).toEqual \
           fixtures.extra_test_model
 
       it "should remove the sub view when an item is removed from the
           collection", ->
         view.collection.remove view.collection.models[0]
         expect(view.items.length).toBe model_attributes.length - 1
-        expect(utils.first(view.items).model.attributes).toEqual \
+        expect(_.first(view.items).model.attributes).toEqual \
           model_attributes[1]
 
       it "should contain the root elements of all its sub views", ->

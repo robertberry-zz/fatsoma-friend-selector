@@ -84,12 +84,12 @@
         it("should add a new sub view when a new item is added to the          collection", function() {
           view.collection.add(fixtures.extra_test_model);
           expect(view.items.length).toBe(model_attributes.length + 1);
-          return expect(utils.last(view.items).model.attributes).toEqual(fixtures.extra_test_model);
+          return expect(_.last(view.items).model.attributes).toEqual(fixtures.extra_test_model);
         });
         it("should remove the sub view when an item is removed from the          collection", function() {
           view.collection.remove(view.collection.models[0]);
           expect(view.items.length).toBe(model_attributes.length - 1);
-          return expect(utils.first(view.items).model.attributes).toEqual(model_attributes[1]);
+          return expect(_.first(view.items).model.attributes).toEqual(model_attributes[1]);
         });
         return it("should contain the root elements of all its sub views", function() {
           var sub_view, _i, _len, _ref, _results;
