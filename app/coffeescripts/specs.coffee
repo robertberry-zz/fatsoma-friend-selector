@@ -6,6 +6,10 @@
 # Author: Robert Berry
 # Date: February 10th 2012
 
+# get other specs
+require ["specs/utils"], ->
+  # pass
+
 require ["views", "utils", "models", "exceptions", "fixtures", \
     "backbone_extensions", "jquery", "underscore", "backbone"], \
     (views, utils, models, exceptions, fixtures, extensions) ->

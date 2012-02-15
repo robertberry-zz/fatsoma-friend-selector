@@ -37,7 +37,8 @@
         this.autocomplete.on("focus_search", function() {
           return _this.search.$el.focus();
         });
-        return this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
+        this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
+        return this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
       };
 
       FriendSelector.prototype.select_user = function(user) {

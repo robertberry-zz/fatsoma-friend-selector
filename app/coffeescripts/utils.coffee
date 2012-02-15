@@ -3,7 +3,7 @@
 # Author: Robert Berry
 # Date: 10th February 2012
 
-define ->
+define ["jquery", "underscore", "backbone"], ->
   exports = {}
 
   # Returns whether the given haystack sequence starts with the given needle
@@ -29,5 +29,47 @@ define ->
     KEY_UP: 38
     KEY_RIGHT: 39
     KEY_DOWN: 40
+
+  # add support for activeElement to browsers that lack it
+  try
+    document.activeElement
+  catch error
+    $('*').live 'blur', ->
+      document.activeElement = null
+    $('*').live 'focus', ->
+      document.activeElement = @
+
+  # Allow you to use Backbone.Events as a native CoffeeScript class
+  class Events
+  _.extend(Events::, Backbone.Events)
+
+  class exports.ElementGroup extends Events
+    constructor: (@items) ->
+
+    has: (el) ->
+      _(@items).any (item) ->
+        item == el
+
+  class exports.FocusGroup extends exports.ElementGroup
+    constructor: (items) ->
+      super items
+      _(@items).invoke "focus", =>
+        # may already have had focus with another element
+        @focus() unless @has_focus
+      _(@items).invoke "blur", =>
+        # newly focused element may be in group
+        @blur() unless @_has_focus()
+      @has_focus = @_has_focus()
+
+    focus: ->
+      @has_focus = yes
+      @trigger "focus"
+
+    _has_focus: ->
+      @has $(document.activeElement)
+
+    blur: ->
+      @has_focus = no
+      @trigger "blur"
 
   exports
