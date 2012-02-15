@@ -32,9 +32,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @autocomplete.on "focus_search", =>
         @search.$el.focus()
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
-      #@search.on "focus_autocomplete", _.bind(@autocomplete.focus, @autocomplete)
-      #@search.on "hide_autocomplete", _.bind(@autocomplete.hide, @autocomplete)
-      #@search.on "show_autocomplete", _.bind(@autocomplete.show, @autocomplete)
 
     # Selects the given user, resets the search query
     select_user: (user) ->
@@ -58,8 +55,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     events:
       "keyup": "on_key_up"
-      "focus": -> @trigger "show_autocomplete"
-      "blur": -> @trigger "hide_autocomplete"
 
     # Key presses either fire re-rendering of the autocomplete, or if it's the
     # down key focuses the first element of the autocomplete
@@ -114,9 +109,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       super
       @user_pool = @options["user_pool"]
       select = _.bind(@select, @)
-      _(@items).invoke "on", "select", select
-      @on "add", (subView) -> subView.on "select", select
-      @on "remove", (subView) -> subView.off "select", select
+      @on "refresh", (items) ->
+        _(items).invoke "on", "select", select
 
     focused: no
 

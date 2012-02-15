@@ -33,6 +33,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
       beforeEach ->
         view = new CollectionViewStub
           collection: new CollectionStub model_attributes
+        view.render()
 
       it "should initially render sub views for all items in the collection", ->
         expect(view.items.length).toBe model_attributes.length

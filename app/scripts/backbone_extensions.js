@@ -48,19 +48,14 @@
       }
 
       CollectionView.prototype.initialize = function() {
-        var collection,
-          _this = this;
+        var collection;
         collection = this.options["collection"];
         if (!collection) {
           throw new exceptions.InstantiationError("CollectionView must be " + "initialized with a collection.");
         }
         collection.bind("add", _.bind(this.add_model, this));
         collection.bind("remove", _.bind(this.remove_model, this));
-        return this.items = _(collection.models).map(function(model) {
-          return new _this.item_view({
-            model: model
-          });
-        });
+        return this.items = {};
       };
 
       CollectionView.prototype.add_model = function(model) {
@@ -68,10 +63,6 @@
           this.collection.add(model);
           return;
         }
-        this.trigger("add", model);
-        this.items.push(new this.item_view({
-          model: model
-        }));
         return this.render();
       };
 
@@ -80,16 +71,19 @@
           this.collection.remove(model);
           return;
         }
-        this.trigger("remove", model);
-        this.items = _.reject(this.items, function(view) {
-          return view.model.id === model.id;
-        });
         return this.render();
       };
 
       CollectionView.prototype.render = function() {
-        var view, _i, _len, _ref, _results;
-        this.$el.html("");
+        var view, _i, _len, _ref, _results,
+          _this = this;
+        _(this.items).invoke("remove");
+        this.items = this.collection.map(function(model) {
+          return new _this.item_view({
+            model: model
+          });
+        });
+        this.trigger("refresh", this.items);
         _ref = this.items;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {

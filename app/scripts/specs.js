@@ -67,9 +67,10 @@
         var view;
         view = null;
         beforeEach(function() {
-          return view = new CollectionViewStub({
+          view = new CollectionViewStub({
             collection: new CollectionStub(model_attributes)
           });
+          return view.render();
         });
         it("should initially render sub views for all items in the collection", function() {
           var i, item, _ref, _results;

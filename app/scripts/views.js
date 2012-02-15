@@ -72,13 +72,7 @@
       };
 
       SearchInput.prototype.events = {
-        "keyup": "on_key_up",
-        "focus": function() {
-          return this.trigger("show_autocomplete");
-        },
-        "blur": function() {
-          return this.trigger("hide_autocomplete");
-        }
+        "keyup": "on_key_up"
       };
 
       SearchInput.prototype.on_key_up = function(event) {
@@ -157,12 +151,8 @@
         UserAutocomplete.__super__.initialize.apply(this, arguments);
         this.user_pool = this.options["user_pool"];
         select = _.bind(this.select, this);
-        _(this.items).invoke("on", "select", select);
-        this.on("add", function(subView) {
-          return subView.on("select", select);
-        });
-        return this.on("remove", function(subView) {
-          return subView.off("select", select);
+        return this.on("refresh", function(items) {
+          return _(items).invoke("on", "select", select);
         });
       };
 

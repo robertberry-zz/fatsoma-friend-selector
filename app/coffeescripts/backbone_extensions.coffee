@@ -24,6 +24,7 @@ define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
   # CollectionView for working with a group of views based on a collection. You
   # must specify the sub view class in the @item_view class property. When the
   # collection changes the view will automatically re-render.
+  # Fires 'refresh' when the sub views change with a list of them.
   class exports.CollectionView extends Backbone.View
     initialize: ->
       collection = @options["collection"]
@@ -32,8 +33,7 @@ define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
           "initialized with a collection.")
       collection.bind "add", _.bind(@add_model, @)
       collection.bind "remove", _.bind(@remove_model, @)
-      @items = _(collection.models).map (model) =>
-        new @item_view model: model
+      @items = {}
 
     # Adds a model to the view and re-renders
     add_model: (model) ->
@@ -44,8 +44,6 @@ define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
       if not @collection.include model
         @collection.add model
         return
-      @trigger "add", model
-      @items.push new @item_view model: model
       @render()
 
     # Removes a model from the view and re-renders
@@ -53,14 +51,14 @@ define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
       if @collection.include model
         @collection.remove model
         return
-      @trigger "remove", model
-      @items = _.reject @items, (view) ->
-        view.model.id == model.id
       @render()
 
     # Re-renders the view and its subviews
     render: ->
-      @$el.html ""
+      _(@items).invoke "remove"
+      @items = @collection.map (model) =>
+        new @item_view model: model
+      @trigger "refresh", @items
       for view in @items
         view.render()
         @$el.append view.el
