@@ -23,6 +23,10 @@
     width: 400px;    
 }
 
+#selector div.focused {
+    background-color: #eee
+}
+
 #selector div.selected {
     border: 2px solid #ccc;
 }

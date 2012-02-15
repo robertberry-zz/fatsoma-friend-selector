@@ -16,7 +16,8 @@
       FriendSelector.prototype.template = templates.friend_selector;
 
       FriendSelector.prototype.initialize = function() {
-        var selected_friends;
+        var selected_friends,
+          _this = this;
         this.friends = this.options["friends"];
         selected_friends = new models.Users(this.options["selected"]);
         this.selected = new exports.SelectedUsers({
@@ -28,14 +29,28 @@
         selected_friends.on("remove", _.bind(this.remaining_friends.add, this.remaining_friends));
         this.search = new exports.SearchInput;
         this.search.render();
-        return this.search.on("autocomplete", _.bind(this.do_autocomplete, this));
+        this.search.on("autocomplete", _.bind(this.do_autocomplete, this));
+        this.search.on("focus_autocomplete", _.bind(this.focus_autocomplete, this));
+        this.search.on("hide_autocomplete", _.bind(this.hide_autocomplete, this));
+        this.autocomplete = new exports.UserAutocomplete({
+          collection: new models.Users
+        });
+        this.autocomplete.on("select", _.bind(this.select_user, this));
+        this.autocomplete.on("focus_search", function() {
+          return _this.search.$el.focus();
+        });
+        return this.autocomplete.render();
       };
 
+      FriendSelector.prototype.focus_autocomplete = function() {};
+
+      FriendSelector.prototype.hide_autocomplete = function() {};
+
       FriendSelector.prototype.do_autocomplete = function(terms) {
-        var matched,
+        var query,
           _this = this;
-        if (terms.length > 0 && _.any(terms)) {
-          matched = this.remaining_friends.filter(function(user) {
+        if (terms && terms.length > 0 && _.any(terms)) {
+          query = function(user) {
             return _(terms).all(function(term) {
               var names;
               names = user.get("name").split(/\s+/);
@@ -43,18 +58,11 @@
                 return name.toLowerCase().indexOf(term) === 0;
               });
             });
-          });
-          this.autocomplete = new exports.UserAutocomplete({
-            collection: new models.Users(matched)
-          });
-          this.$(".autocomplete_box").html(this.autocomplete.el);
-          this.autocomplete.on("select", _.bind(this.select_user, this));
-          this.autocomplete.on("focus_input", function() {
-            return _this.search.$el.focus();
-          });
-          return this.autocomplete.render();
+          };
+          this.autocomplete.set_matched(this.remaining_friends.filter(query));
+          return this.autocomplete.show();
         } else {
-          return this.$(".autocomplete_box").html("");
+          return this.autocomplete.hide();
         }
       };
 
@@ -66,7 +74,8 @@
       FriendSelector.prototype.render = function() {
         FriendSelector.__super__.render.apply(this, arguments);
         this.$(".selected").html(this.selected.el);
-        return this.$(".search_box").html(this.search.el);
+        this.$(".search_box").html(this.search.el);
+        return this.$(".autocomplete_box").html(this.autocomplete.el);
       };
 
       return FriendSelector;
@@ -88,7 +97,13 @@
       };
 
       SearchInput.prototype.events = {
-        "keyup": "on_key_up"
+        "keyup": "on_key_up",
+        "focus": function() {
+          return this.trigger("autocomplete");
+        },
+        "blur": function() {
+          return this.trigger("hide_autocomplete");
+        }
       };
 
       SearchInput.prototype.on_key_up = function(event) {
@@ -133,9 +148,13 @@
         return this.trigger("select", this.model);
       };
 
-      UserAutocompleteItem.prototype.focus = function() {};
+      UserAutocompleteItem.prototype.focus = function() {
+        return this.$el.addClass("focused");
+      };
 
-      UserAutocompleteItem.prototype.unfocus = function() {};
+      UserAutocompleteItem.prototype.unfocus = function() {
+        return this.$el.removeClass("focused");
+      };
 
       return UserAutocompleteItem;
 
@@ -203,6 +222,10 @@
         return this.trigger("select", model);
       };
 
+      UserAutocomplete.prototype.focus = function() {
+        return this.focus_item(0);
+      };
+
       UserAutocomplete.prototype.focus_item = function(n) {
         if (n >= this.items.length) {
           throw new exceptions.InvalidArgumentError("Attempting to focus item " + ("" + n + " but autocomplete only has " + this.items.length + " items."));
@@ -225,9 +248,22 @@
         return this.$el.css("left", left);
       };
 
+      UserAutocomplete.prototype.hide = function() {
+        return this.$el.hide();
+      };
+
+      UserAutocomplete.prototype.show = function() {
+        return this.$el.show();
+      };
+
       UserAutocomplete.prototype.render = function() {
         UserAutocomplete.__super__.render.apply(this, arguments);
         return this.float();
+      };
+
+      UserAutocomplete.prototype.set_matched = function(matched) {
+        this.collection.remove(this.collection.models);
+        return this.collection.add(matched);
       };
 
       return UserAutocomplete;
