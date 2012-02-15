@@ -25,35 +25,16 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         @remaining_friends)
       @search = new exports.SearchInput
       @search.render()
-      @search.on "autocomplete", _.bind(@do_autocomplete, @)
-      @search.on "focus_autocomplete", _.bind(@focus_autocomplete, @)
-      @search.on "hide_autocomplete", _.bind(@hide_autocomplete, @)
       @autocomplete = new exports.UserAutocomplete
         collection: new models.Users
+        user_pool: @remaining_friends
       @autocomplete.on "select", _.bind(@select_user, @)
       @autocomplete.on "focus_search", =>
         @search.$el.focus()
       @autocomplete.render()
-
-    focus_autocomplete: ->
-      #@autocomplete.focus()
-
-    hide_autocomplete: ->
-      #@autocomplete?.hide()
-
-    # Autocompletes for the given list of search terms. Probably could do with
-    # some kind of controller for this.
-    do_autocomplete: (terms) ->
-      if terms && terms.length > 0 && _.any terms
-        query = (user) =>
-          _(terms).all (term) =>
-            names = user.get("name").split /\s+/
-            _(names).any (name) ->
-              name.toLowerCase().indexOf(term) == 0
-        @autocomplete.set_matched @remaining_friends.filter query
-        @autocomplete.show()
-      else
-        @autocomplete.hide()
+      @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
+      @search.on "focus_autocomplete", _.bind(@autocomplete.focus, @autocomplete)
+      @search.on "hide_autocomplete", _.bind(@autocomplete.hide, @autocomplete)
 
     # Selects the given user, resets the search query
     select_user: (user) ->
@@ -125,8 +106,11 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     events:
       "keydown": "on_key_down"
 
+    # should specify a 'user_pool' from which the users are taken to populate
+    # the dropdown (maybe this behaviour should be moved to a controller?)
     initialize: ->
       super
+      @user_pool = @options["user_pool"]
       select = _.bind(@select, @)
       _(@items).invoke "on", "select", select
       @on "add", (subView) -> subView.on "select", select
@@ -181,6 +165,20 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @$el.css "top", top
       @$el.css "left", left
 
+    # filters the shown users from the user pool given the search terms
+    filter: (terms) ->
+      if terms && terms.length > 0 && _.any terms
+        query = (user) =>
+          _(terms).all (term) =>
+            names = user.get("name").split /\s+/
+            _(names).any (name) ->
+              name.toLowerCase().indexOf(term) == 0
+        @collection.remove @collection.models
+        @collection.add @user_pool.filter query
+        @show()
+      else
+        @hide()
+
     hide: ->
       @$el.hide()
 
@@ -190,10 +188,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     render: ->
       super
       @float()
-
-    set_matched: (matched) ->
-      @collection.remove @collection.models
-      @collection.add matched
 
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item
