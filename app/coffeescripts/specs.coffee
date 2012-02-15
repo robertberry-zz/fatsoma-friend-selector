@@ -89,35 +89,27 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
       search_box = null
 
       beforeEach ->
-        search_box = selector.$(".search")
+        search_box = selector.search
 
       afterEach ->
         search_box = null
 
       it "should be initially empty", ->
-        expect(search_box.val()).toBeFalsy()
+        expect(search_box.full_query()).toBeFalsy()
 
-      it "should render the autocomplete dropdown when input changes", ->
-        spyOn selector, "render_autocomplete"
-        # you must call delegateEvents after spying on a method that will be
-        # called via a callback as specified in Backbone.View events hash. this
-        # is to do with the the original method being wrapped in a function and
-        # that the event triggers the wrapped function, not the wrapper
-        selector.delegateEvents()
-        search_box.keyup()
-        expect(selector.render_autocomplete).toHaveBeenCalled()
+      it "should fire autocomplete when input changes", ->
+        callback = jasmine.createSpy()
+        search_box.on "autocomplete", callback
+        search_box.$el.keyup()
+        expect(callback).toHaveBeenCalled()
 
-      it "should focus the first item in the autocomplete dropdown if I press
-          the down arrow", ->
-        spyOn selector.autocomplete, "focus_item"
-        selector.autocomplete.delegateEvents()
-        # jQuery.keypress() does not allow us to specify what key it is that is
-        # pressed, so we're going to fake the event directly here and send it
-        # to the handler
+      it "should fire focus autocomplete event when pressing down arrow", ->
+        callback = jasmine.createSpy()
+        search_box.on "focus_autocomplete", callback
         event_stub =
           keyCode: utils.keyCodes.KEY_DOWN
-        search_box.on_key_down(event_stub)
-        expect(selector.autocomplete.focus_item).toHaveBeenCalledWith(0)
+        search_box.on_key_up event_stub
+        expect(callback).toHaveBeenCalled()
 
     describe "autocomplete dropdown", ->
       autocomplete = null
@@ -138,7 +130,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
             utils.startsWith name, search_term
 
         beforeEach ->
-          selector.set_search_term search_term
+          selector.search.set_query search_term
           view = selector.autocomplete
 
         it "should be populated", ->
@@ -150,6 +142,11 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
             # focus first elem
             view.focus_item(0)
             spyOn view, "focus_item"
+            # you must call delegateEvents after spying on a method that will
+            # be called via a callback as specified in Backbone.View events
+            # hash. this is to do with the the original method being wrapped in
+            # a function and that the event triggers the wrapped function, not
+            # the wrapper
             view.delegateEvents()
             # see the search_box key down test for why stubbing here
             event_stub =
@@ -199,10 +196,10 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
 
           it "should contain three users regardless of the case of the search
               term", ->
-            selector.set_search_term search_term.toUpperCase()
+            selector.search.set_query search_term.toUpperCase()
             view = selector.autocomplete
             expect(view.collection.length).toBe 3
-            selector.set_search_term search_term.toLowerCase()
+            selector.search.set_query search_term.toLowerCase()
             view = selector.autocomplete
             expect(view.collection.length).toBe 3
 
@@ -222,7 +219,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
               expect(collection_ids).not.toContain id
 
           it "should match one user exactly when the full name is given", ->
-            selector.set_search_term selector.friends.models[0].attributes.name
+            selector.search.set_query selector.friends.models[0].attributes.name
             view = selector.autocomplete
             expect(view.collection.length).toBe 1
             expect(view.collection.models[0].attributes).toEqual \
@@ -253,5 +250,5 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
       it "should remove selected items from the autocomplete dropdown", ->
         first_friend = selector.friends.models[0]
         selected.add_model first_friend
-        selector.set_search_term first_friend.attributes.name
+        selector.search.set_query first_friend.attributes.name
         expect(selector.autocomplete.collection.models).not.toContain first_friend

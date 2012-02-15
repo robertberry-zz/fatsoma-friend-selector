@@ -137,19 +137,30 @@
         var search_box;
         search_box = null;
         beforeEach(function() {
-          return search_box = selector.$(".search");
+          return search_box = selector.search;
         });
         afterEach(function() {
           return search_box = null;
         });
         it("should be initially empty", function() {
-          return expect(search_box.val()).toBeFalsy();
+          return expect(search_box.full_query()).toBeFalsy();
         });
-        return it("should render the autocomplete dropdown when input changes", function() {
-          spyOn(selector, "render_autocomplete");
-          selector.delegateEvents();
-          search_box.keyup();
-          return expect(selector.render_autocomplete).toHaveBeenCalled();
+        it("should fire autocomplete when input changes", function() {
+          var callback;
+          callback = jasmine.createSpy();
+          search_box.on("autocomplete", callback);
+          search_box.$el.keyup();
+          return expect(callback).toHaveBeenCalled();
+        });
+        return it("should fire focus autocomplete event when pressing down arrow", function() {
+          var callback, event_stub;
+          callback = jasmine.createSpy();
+          search_box.on("focus_autocomplete", callback);
+          event_stub = {
+            keyCode: utils.keyCodes.KEY_DOWN
+          };
+          search_box.on_key_up(event_stub);
+          return expect(callback).toHaveBeenCalled();
         });
       });
       describe("autocomplete dropdown", function() {
@@ -173,21 +184,73 @@
             });
           };
           beforeEach(function() {
-            selector.set_search_term(search_term);
+            selector.search.set_query(search_term);
             return view = selector.autocomplete;
           });
           it("should be populated", function() {
             return expect(autocomplete).not.toBeEmpty();
+          });
+          describe("keyboard behaviour", function() {
+            it("should focus the next item in the list if the user presses the             down key", function() {
+              var event_stub;
+              view.focus_item(0);
+              spyOn(view, "focus_item");
+              view.delegateEvents();
+              event_stub = {
+                keyCode: utils.keyCodes.KEY_DOWN
+              };
+              view.on_key_down(event_stub);
+              return expect(view.focus_item).toHaveBeenCalledWith(1);
+            });
+            it("should focus the previous item in the list if the user presses              the up key", function() {
+              var event_stub;
+              view.focus_item(1);
+              spyOn(view, "focus_item");
+              view.delegateEvents();
+              event_stub = {
+                keyCode: utils.keyCodes.KEY_UP
+              };
+              view.on_key_down(event_stub);
+              return expect(view.focus_item).toHaveBeenCalledWith(0);
+            });
+            describe("when the first item in the list is selected", function() {
+              beforeEach(function() {
+                return view.focus_item(0);
+              });
+              return it("should focus the search input if the user presses the up                key", function() {
+                var event_stub;
+                expect(view.focused).toBeTruthy();
+                event_stub = {
+                  keyCode: utils.keyCodes.KEY_UP
+                };
+                view.on_key_down(event_stub);
+                expect(view.focused).toBeFalsy();
+                return expect(selector.$(".search").is(":focus")).toBeTruthy();
+              });
+            });
+            return describe("when the last item in the list is selected", function() {
+              beforeEach(function() {
+                return view.focus_item(view.items.length - 1);
+              });
+              return it("should focus the first item in the list if the user presses the                down arrow key", function() {
+                var event_stub;
+                event_stub = {
+                  keyCode: utils.keyCodes.KEY_DOWN
+                };
+                view.on_key_down(event_stub);
+                return expect(view.focused_item).toBe(0);
+              });
+            });
           });
           describe("the view's collection", function() {
             it("should contain three users (given the fixtures)", function() {
               return expect(view.collection.length).toBe(3);
             });
             it("should contain three users regardless of the case of the search              term", function() {
-              selector.set_search_term(search_term.toUpperCase());
+              selector.search.set_query(search_term.toUpperCase());
               view = selector.autocomplete;
               expect(view.collection.length).toBe(3);
-              selector.set_search_term(search_term.toLowerCase());
+              selector.search.set_query(search_term.toLowerCase());
               view = selector.autocomplete;
               return expect(view.collection.length).toBe(3);
             });
@@ -217,13 +280,13 @@
               return _results;
             });
             return it("should match one user exactly when the full name is given", function() {
-              selector.set_search_term(selector.friends.models[0].attributes.name);
+              selector.search.set_query(selector.friends.models[0].attributes.name);
               view = selector.autocomplete;
               expect(view.collection.length).toBe(1);
               return expect(view.collection.models[0].attributes).toEqual(fixtures.friends[0]);
             });
           });
-          describe("when an item is selected", function() {
+          describe("when an item is clicked", function() {
             return it("should fire the select event with the proper model", function() {
               var callback, first_sub_view;
               callback = jasmine.createSpy();
@@ -260,7 +323,7 @@
           var first_friend;
           first_friend = selector.friends.models[0];
           selected.add_model(first_friend);
-          selector.set_search_term(first_friend.attributes.name);
+          selector.search.set_query(first_friend.attributes.name);
           return expect(selector.autocomplete.collection.models).not.toContain(first_friend);
         });
       });

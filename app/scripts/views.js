@@ -2,7 +2,7 @@
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  define(["models", "templates", "exceptions", "backbone_extensions"], function(models, templates, exceptions, extensions) {
+  define(["models", "templates", "exceptions", "backbone_extensions", "utils"], function(models, templates, exceptions, extensions, utils) {
     var exports;
     exports = {};
     exports.FriendSelector = (function(_super) {
@@ -15,10 +15,6 @@
 
       FriendSelector.prototype.template = templates.friend_selector;
 
-      FriendSelector.prototype.events = {
-        "keyup .search": "render_autocomplete"
-      };
-
       FriendSelector.prototype.initialize = function() {
         var selected_friends;
         this.friends = this.options["friends"];
@@ -29,13 +25,16 @@
         this.selected.render();
         this.remaining_friends = new models.Users(this.friends.without(selected_friends.models));
         selected_friends.on("add", _.bind(this.remaining_friends.remove, this.remaining_friends));
-        return selected_friends.on("remove", _.bind(this.remaining_friends.add, this.remaining_friends));
+        selected_friends.on("remove", _.bind(this.remaining_friends.add, this.remaining_friends));
+        this.search = new exports.SearchInput;
+        this.search.render();
+        return this.search.on("autocomplete", _.bind(this.do_autocomplete, this));
       };
 
       FriendSelector.prototype.position_dropdown = function() {
         var dropdown, left, search_input, top, _ref;
         dropdown = this.$('.autocomplete');
-        search_input = this.$('input.search');
+        search_input = this.search.$el;
         _ref = dropdown.offset(), top = _ref.top, left = _ref.left;
         dropdown.css("position", "absolute");
         dropdown.css("top", top);
@@ -43,20 +42,10 @@
         return dropdown.css("width", search_input.css("width"));
       };
 
-      FriendSelector.prototype.search_term = function() {
-        return this.$(".search").val() || "";
-      };
-
-      FriendSelector.prototype.set_search_term = function(term) {
-        this.$(".search").val(term);
-        return this.render_autocomplete();
-      };
-
-      FriendSelector.prototype.render_autocomplete = function() {
-        var matched, terms,
+      FriendSelector.prototype.do_autocomplete = function(terms) {
+        var matched,
           _this = this;
-        if (this.search_term()) {
-          terms = this.search_term().toLowerCase().split(/\s+/);
+        if (terms.length > 0 && _.any(terms)) {
           matched = this.remaining_friends.filter(function(user) {
             return _(terms).all(function(term) {
               var names;
@@ -86,12 +75,58 @@
       FriendSelector.prototype.render = function() {
         FriendSelector.__super__.render.apply(this, arguments);
         this.$(".selected").html(this.selected.el);
+        this.$(".search_box").html(this.search.el);
         return this.position_dropdown();
       };
 
       return FriendSelector;
 
     })(extensions.MustacheView);
+    exports.SearchInput = (function(_super) {
+
+      __extends(SearchInput, _super);
+
+      function SearchInput() {
+        SearchInput.__super__.constructor.apply(this, arguments);
+      }
+
+      SearchInput.prototype.tagName = "input";
+
+      SearchInput.prototype.attributes = {
+        type: "text",
+        "class": "search"
+      };
+
+      SearchInput.prototype.events = {
+        "keyup": "on_key_up"
+      };
+
+      SearchInput.prototype.initialize = function() {};
+
+      SearchInput.prototype.on_key_up = function(event) {
+        if (event.keyCode === utils.keyCodes.KEY_DOWN) {
+          return this.trigger("focus_autocomplete");
+        } else {
+          return this.trigger("autocomplete", this.terms());
+        }
+      };
+
+      SearchInput.prototype.full_query = function() {
+        return this.$el.val() || "";
+      };
+
+      SearchInput.prototype.set_query = function(query) {
+        this.$el.val(query);
+        return this.trigger("autocomplete", this.terms());
+      };
+
+      SearchInput.prototype.terms = function() {
+        return this.full_query().toLowerCase().split(/\s+/);
+      };
+
+      return SearchInput;
+
+    })(Backbone.View);
     exports.UserAutocompleteItem = (function(_super) {
 
       __extends(UserAutocompleteItem, _super);
@@ -109,6 +144,10 @@
       UserAutocompleteItem.prototype.on_click = function(event) {
         return this.trigger("select", this.model);
       };
+
+      UserAutocompleteItem.prototype.focus = function() {};
+
+      UserAutocompleteItem.prototype.unfocus = function() {};
 
       return UserAutocompleteItem;
 
@@ -138,6 +177,16 @@
 
       UserAutocomplete.prototype.select = function(model) {
         return this.trigger("select", model);
+      };
+
+      UserAutocomplete.prototype.focus_item = function(n) {
+        if (n >= this.items.length) {
+          throw new exceptions.InvalidArgumentError("Attempting to focus item " + ("" + n + " but autocomplete only has " + this.items.length + " items."));
+        }
+        if (this.focused_item !== n) {
+          this.items[this.focused_item].unfocus();
+          return this.items[n].focus();
+        }
       };
 
       return UserAutocomplete;

@@ -3,16 +3,13 @@
 # Author: Robert Berry
 # Created: 9th Feb 2012
 
-define ["models", "templates", "exceptions", "backbone_extensions"], \
-    (models, templates, exceptions, extensions) ->
+define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
+    (models, templates, exceptions, extensions, utils) ->
   exports = {}
 
   # Main view
   class exports.FriendSelector extends extensions.MustacheView
     template: templates.friend_selector
-
-    events:
-      "keyup .search": "render_autocomplete"
 
     initialize: ->
       @friends = @options["friends"]
@@ -26,32 +23,25 @@ define ["models", "templates", "exceptions", "backbone_extensions"], \
         @remaining_friends)
       selected_friends.on "remove", _.bind(@remaining_friends.add, \
         @remaining_friends)
+      @search = new exports.SearchInput
+      @search.render()
+      @search.on "autocomplete", _.bind(@do_autocomplete, @)
 
     # Repositions the dropdown so it's absolutely positioned below the search
     # input. This has to be done with calculated values via JavaScript.
     position_dropdown: ->
       dropdown = @$('.autocomplete')
-      search_input = @$('input.search')
+      search_input = @search.$el
       {top, left} = dropdown.offset()
       dropdown.css "position", "absolute"
       dropdown.css "top", top
       dropdown.css "left", left
       dropdown.css "width", search_input.css "width"
 
-    # The current search term
-    search_term: ->
-      @$(".search").val() || ""
-
-    # Sets the search term and renders the dropdown
-    set_search_term: (term) ->
-      @$(".search").val term
-      @render_autocomplete()
-
-    # Renders the autocomplete dropdown
-    # (Maybe this should be moved to a controller?)
-    render_autocomplete: ->
-      if @search_term()
-        terms = @search_term().toLowerCase().split /\s+/
+    # Autocompletes for the given list of search terms. Probably could do with
+    # some kind of controller for this.
+    do_autocomplete: (terms) ->
+      if terms.length > 0 && _.any terms
         matched = @remaining_friends.filter (user) =>
           _(terms).all (term) =>
             names = user.get("name").split /\s+/
@@ -73,7 +63,40 @@ define ["models", "templates", "exceptions", "backbone_extensions"], \
     render: ->
       super
       @$(".selected").html @selected.el
+      @$(".search_box").html @search.el
       @position_dropdown()
+
+  class exports.SearchInput extends Backbone.View
+    tagName: "input",
+
+    attributes:
+      type: "text"
+      class: "search"
+
+    events:
+      "keyup": "on_key_up"
+
+    initialize: ->
+      # pass
+
+    on_key_up: (event) ->
+      if event.keyCode == utils.keyCodes.KEY_DOWN
+        @trigger "focus_autocomplete"
+      else
+        @trigger "autocomplete", @terms()
+
+    # Returns the full query as entered by the user
+    full_query: ->
+      @$el.val() || ""
+
+    # Sets the query
+    set_query: (query) ->
+      @$el.val query
+      @trigger "autocomplete", @terms()
+
+    # Returns the search terms (separate words)
+    terms: ->
+      @full_query().toLowerCase().split /\s+/
 
   class exports.UserAutocompleteItem extends extensions.MustacheView
     events:
@@ -84,6 +107,12 @@ define ["models", "templates", "exceptions", "backbone_extensions"], \
     # When clicked fires an event saying the given user has been selected
     on_click: (event) ->
       @trigger "select", @model
+
+    focus: ->
+      # pass
+
+    unfocus: ->
+      # pass
 
   # Autocomplete dropdown
   class exports.UserAutocomplete extends extensions.CollectionView
@@ -98,6 +127,14 @@ define ["models", "templates", "exceptions", "backbone_extensions"], \
 
     select: (model) ->
       @trigger "select", model
+
+    focus_item: (n) ->
+      if n >= @items.length
+        throw new exceptions.InvalidArgumentError("Attempting to focus item " +
+          "#{n} but autocomplete only has #{@items.length} items.")
+      unless @focused_item == n
+        @items[@focused_item].unfocus()
+        @items[n].focus()
 
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item

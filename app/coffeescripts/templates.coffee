@@ -1,7 +1,7 @@
 
 define
   friend_selector: '''
-                     <input type="text" class="search" />
+                     <div class="search_box"></div>
                      <div class="autocomplete"></div>
                      <div class="selected"></div>
                      <input type="submit" value="Create Party" />
