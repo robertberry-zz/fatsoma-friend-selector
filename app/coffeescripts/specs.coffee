@@ -107,6 +107,18 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
         search_box.keyup()
         expect(selector.render_autocomplete).toHaveBeenCalled()
 
+      it "should focus the first item in the autocomplete dropdown if I press
+          the down arrow", ->
+        spyOn selector.autocomplete, "focus_item"
+        selector.autocomplete.delegateEvents()
+        # jQuery.keypress() does not allow us to specify what key it is that is
+        # pressed, so we're going to fake the event directly here and send it
+        # to the handler
+        event_stub =
+          keyCode: utils.keyCodes.KEY_DOWN
+        search_box.on_key_down(event_stub)
+        expect(selector.autocomplete.focus_item).toHaveBeenCalledWith(0)
+
     describe "autocomplete dropdown", ->
       autocomplete = null
 
@@ -131,6 +143,55 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
 
         it "should be populated", ->
           expect(autocomplete).not.toBeEmpty()
+
+        describe "keyboard behaviour", ->
+          it "should focus the next item in the list if the user presses the
+             down key", ->
+            # focus first elem
+            view.focus_item(0)
+            spyOn view, "focus_item"
+            view.delegateEvents()
+            # see the search_box key down test for why stubbing here
+            event_stub =
+              keyCode: utils.keyCodes.KEY_DOWN
+            view.on_key_down(event_stub)
+            expect(view.focus_item).toHaveBeenCalledWith(1)
+
+          it "should focus the previous item in the list if the user presses
+              the up key", ->
+            # focus second elem
+            view.focus_item(1)
+            spyOn view, "focus_item"
+            view.delegateEvents()
+            # see the search_box key down test for why stubbing here
+            event_stub =
+              keyCode: utils.keyCodes.KEY_UP
+            view.on_key_down(event_stub)
+            expect(view.focus_item).toHaveBeenCalledWith(0)
+
+          describe "when the first item in the list is selected", ->
+            beforeEach ->
+              view.focus_item(0)
+
+            it "should focus the search input if the user presses the up
+                key", ->
+              expect(view.focused).toBeTruthy()
+              event_stub =
+                keyCode: utils.keyCodes.KEY_UP
+              view.on_key_down(event_stub)
+              expect(view.focused).toBeFalsy()
+              expect(selector.$(".search").is(":focus")).toBeTruthy()
+
+          describe "when the last item in the list is selected", ->
+            beforeEach ->
+              view.focus_item(view.items.length - 1)
+
+            it "should focus the first item in the list if the user presses the
+                down arrow key", ->
+              event_stub =
+                keyCode: utils.keyCodes.KEY_DOWN
+              view.on_key_down(event_stub)
+              expect(view.focused_item).toBe 0
 
         describe "the view's collection", ->
           it "should contain three users (given the fixtures)", ->
@@ -167,7 +228,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
             expect(view.collection.models[0].attributes).toEqual \
               fixtures.friends[0]
 
-        describe "when an item is selected", ->
+        describe "when an item is clicked", ->
           it "should fire the select event with the proper model", ->
             callback = jasmine.createSpy()
             view.on "select", callback
