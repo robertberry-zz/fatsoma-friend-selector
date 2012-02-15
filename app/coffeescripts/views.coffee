@@ -31,10 +31,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @autocomplete.on "select", _.bind(@select_user, @)
       @autocomplete.on "focus_search", =>
         @search.$el.focus()
-      @autocomplete.render()
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
-      @search.on "focus_autocomplete", _.bind(@autocomplete.focus, @autocomplete)
-      @search.on "hide_autocomplete", _.bind(@autocomplete.hide, @autocomplete)
+      #@search.on "focus_autocomplete", _.bind(@autocomplete.focus, @autocomplete)
+      #@search.on "hide_autocomplete", _.bind(@autocomplete.hide, @autocomplete)
+      #@search.on "show_autocomplete", _.bind(@autocomplete.show, @autocomplete)
 
     # Selects the given user, resets the search query
     select_user: (user) ->
@@ -46,6 +46,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @$(".selected").html @selected.el
       @$(".search_box").html @search.el
       @$(".autocomplete_box").html @autocomplete.el
+      # only render here so it's inserted before floated
+      @autocomplete.render()
 
   class exports.SearchInput extends Backbone.View
     tagName: "input",
@@ -56,7 +58,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     events:
       "keyup": "on_key_up"
-      "focus": -> @trigger "autocomplete"
+      "focus": -> @trigger "show_autocomplete"
       "blur": -> @trigger "hide_autocomplete"
 
     # Key presses either fire re-rendering of the autocomplete, or if it's the
@@ -160,10 +162,12 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         @focused_item = n
 
     float: ->
-      {top, left} = @$el.offset()
-      @$el.css "position", "absolute"
-      @$el.css "top", top
-      @$el.css "left", left
+      if not @floated
+        {top, left} = @$el.offset()
+        @$el.css "position", "absolute"
+        @$el.css "top", top
+        @$el.css "left", left
+        @floated = yes
 
     # filters the shown users from the user pool given the search terms
     filter: (terms) ->

@@ -37,10 +37,7 @@
         this.autocomplete.on("focus_search", function() {
           return _this.search.$el.focus();
         });
-        this.autocomplete.render();
-        this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
-        this.search.on("focus_autocomplete", _.bind(this.autocomplete.focus, this.autocomplete));
-        return this.search.on("hide_autocomplete", _.bind(this.autocomplete.hide, this.autocomplete));
+        return this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
       };
 
       FriendSelector.prototype.select_user = function(user) {
@@ -52,7 +49,8 @@
         FriendSelector.__super__.render.apply(this, arguments);
         this.$(".selected").html(this.selected.el);
         this.$(".search_box").html(this.search.el);
-        return this.$(".autocomplete_box").html(this.autocomplete.el);
+        this.$(".autocomplete_box").html(this.autocomplete.el);
+        return this.autocomplete.render();
       };
 
       return FriendSelector;
@@ -76,7 +74,7 @@
       SearchInput.prototype.events = {
         "keyup": "on_key_up",
         "focus": function() {
-          return this.trigger("autocomplete");
+          return this.trigger("show_autocomplete");
         },
         "blur": function() {
           return this.trigger("hide_autocomplete");
@@ -220,10 +218,13 @@
 
       UserAutocomplete.prototype.float = function() {
         var left, top, _ref;
-        _ref = this.$el.offset(), top = _ref.top, left = _ref.left;
-        this.$el.css("position", "absolute");
-        this.$el.css("top", top);
-        return this.$el.css("left", left);
+        if (!this.floated) {
+          _ref = this.$el.offset(), top = _ref.top, left = _ref.left;
+          this.$el.css("position", "absolute");
+          this.$el.css("top", top);
+          this.$el.css("left", left);
+          return this.floated = true;
+        }
       };
 
       UserAutocomplete.prototype.filter = function(terms) {

@@ -170,7 +170,7 @@
           return autocomplete = selector.$(".autocomplete_box");
         });
         it("should be initially empty", function() {
-          return expect(autocomplete).toBeEmpty();
+          return expect(autocomplete.children(".autocomplete").html()).toBeFalsy();
         });
         return describe("when a user enters a valid search term", function() {
           var match_search_term, search_term, view;

@@ -118,7 +118,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
         autocomplete = selector.$(".autocomplete_box")
 
       it "should be initially empty", ->
-        expect(autocomplete).toBeEmpty()
+        expect(autocomplete.children(".autocomplete").html()).toBeFalsy()
 
       describe "when a user enters a valid search term", ->
         view = null
