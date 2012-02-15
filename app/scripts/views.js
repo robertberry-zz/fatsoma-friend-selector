@@ -38,7 +38,13 @@
           return _this.search.$el.focus();
         });
         this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
-        return this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
+        this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
+        this.search_focus_group.on("focus", function() {
+          return console.debug("focus search");
+        });
+        return this.search_focus_group.on("blur", function() {
+          return console.debug("blur search");
+        });
       };
 
       FriendSelector.prototype.select_user = function(user) {
@@ -107,6 +113,10 @@
       function UserAutocompleteItem() {
         UserAutocompleteItem.__super__.constructor.apply(this, arguments);
       }
+
+      UserAutocompleteItem.prototype.attributes = {
+        tabindex: 0
+      };
 
       UserAutocompleteItem.prototype.events = {
         "click": "on_click"

@@ -34,42 +34,53 @@ define ["jquery", "underscore", "backbone"], ->
   try
     document.activeElement
   catch error
-    $('*').live 'blur', ->
+    $(document).on 'blur', '*', ->
       document.activeElement = null
-    $('*').live 'focus', ->
+    $(document).on 'focus', '*', ->
       document.activeElement = @
+
+  # I found a bug in jQuery.contains where it's returning true more often than
+  # it should. This is a workaround till they fix it
+  exports.contains = (elem1, elem2) ->
+    return no if elem1 == elem2
+    if "contains" in $(elem1)[0]
+      $(elem1)[0].contains($(elem2)[0])
+    else
+      no
 
   # Allow you to use Backbone.Events as a native CoffeeScript class
   class Events
   _.extend(Events::, Backbone.Events)
 
   class exports.ElementGroup extends Events
-    constructor: (@items) ->
+    constructor: (items) ->
+      @items = _(items).map (item) -> $(item)
 
     has: (el) ->
       _(@items).any (item) ->
-        item == el
+        item.is(el) || exports.contains(item, el)
 
   class exports.FocusGroup extends exports.ElementGroup
     constructor: (items) ->
       super items
-      _(@items).invoke "focus", =>
-        # may already have had focus with another element
-        @focus() unless @has_focus
-      _(@items).invoke "blur", =>
-        # newly focused element may be in group
-        @blur() unless @_has_focus()
-      @has_focus = @_has_focus()
+      refresh = _.bind(@_refresh_focus, @)
+      $(document).on "focus", "*", refresh
+      _(@items).invoke "on", "blur", refresh
+      @_refresh_focus()
 
-    focus: ->
-      @has_focus = yes
-      @trigger "focus"
+    _refresh_focus: ->
+      focused = @_has_focus()
+      if @has_focus and not focused
+        @trigger "blur"
+      if not @has_focus and focused
+        @trigger "focus"
+      @has_focus = focused
 
     _has_focus: ->
+      console.debug $(document.activeElement)
       @has $(document.activeElement)
 
-    blur: ->
-      @has_focus = no
-      @trigger "blur"
+
+
 
   exports

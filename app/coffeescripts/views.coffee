@@ -34,8 +34,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
 
       @search_focus_group = new utils.FocusGroup [@search.el, @autocomplete.el]
-      @search_focus_group.on "focus" -> console.debug "focus search"
-      @search_focus_group.on "blur" -> console.debug "blur search"
+      @search_focus_group.on "focus", -> console.debug "focus search"
+      @search_focus_group.on "blur", -> console.debug "blur search"
 
     # Selects the given user, resets the search query
     select_user: (user) ->
@@ -82,6 +82,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @full_query().toLowerCase().split /\s+/
 
   class exports.UserAutocompleteItem extends extensions.MustacheView
+    attributes:
+      tabindex: 0
+
     events:
       "click": "on_click"
 

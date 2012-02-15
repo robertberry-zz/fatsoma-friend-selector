@@ -1,5 +1,6 @@
 (function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   define(["jquery", "underscore", "backbone"], function() {
@@ -30,13 +31,21 @@
     try {
       document.activeElement;
     } catch (error) {
-      $('*').live('blur', function() {
+      $(document).on('blur', '*', function() {
         return document.activeElement = null;
       });
-      $('*').live('focus', function() {
+      $(document).on('focus', '*', function() {
         return document.activeElement = this;
       });
     }
+    exports.contains = function(elem1, elem2) {
+      if (elem1 === elem2) return false;
+      if (__indexOf.call($(elem1)[0], "contains") >= 0) {
+        return $(elem1)[0].contains($(elem2)[0]);
+      } else {
+        return false;
+      }
+    };
     Events = (function() {
 
       function Events() {}
@@ -50,12 +59,14 @@
       __extends(ElementGroup, _super);
 
       function ElementGroup(items) {
-        this.items = items;
+        this.items = _(items).map(function(item) {
+          return $(item);
+        });
       }
 
       ElementGroup.prototype.has = function(el) {
         return _(this.items).any(function(item) {
-          return item === el;
+          return item.is(el) || exports.contains(item, el);
         });
       };
 
@@ -67,29 +78,25 @@
       __extends(FocusGroup, _super);
 
       function FocusGroup(items) {
-        var _this = this;
+        var refresh;
         FocusGroup.__super__.constructor.call(this, items);
-        _(this.items).invoke("focus", function() {
-          if (!_this.has_focus) return _this.focus();
-        });
-        _(this.items).invoke("blur", function() {
-          if (!_this._has_focus()) return _this.blur();
-        });
-        this.has_focus = this._has_focus();
+        refresh = _.bind(this._refresh_focus, this);
+        $(document).on("focus", "*", refresh);
+        _(this.items).invoke("on", "blur", refresh);
+        this._refresh_focus();
       }
 
-      FocusGroup.prototype.focus = function() {
-        this.has_focus = true;
-        return this.trigger("focus");
+      FocusGroup.prototype._refresh_focus = function() {
+        var focused;
+        focused = this._has_focus();
+        if (this.has_focus && !focused) this.trigger("blur");
+        if (!this.has_focus && focused) this.trigger("focus");
+        return this.has_focus = focused;
       };
 
       FocusGroup.prototype._has_focus = function() {
+        console.debug($(document.activeElement));
         return this.has($(document.activeElement));
-      };
-
-      FocusGroup.prototype.blur = function() {
-        this.has_focus = false;
-        return this.trigger("blur");
       };
 
       return FocusGroup;
