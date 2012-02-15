@@ -115,7 +115,7 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
       autocomplete = null
 
       beforeEach ->
-        autocomplete = selector.$(".autocomplete")
+        autocomplete = selector.$(".autocomplete_box")
 
       it "should be initially empty", ->
         expect(autocomplete).toBeEmpty()
@@ -172,7 +172,6 @@ require ["views", "utils", "models", "exceptions", "fixtures", \
 
             it "should focus the search input if the user presses the up
                 key", ->
-              expect(view.focused).toBeTruthy()
               event_stub =
                 keyCode: utils.keyCodes.KEY_UP
               view.on_key_down(event_stub)

@@ -2,7 +2,7 @@
 define
   friend_selector: '''
                      <div class="search_box"></div>
-                     <div class="autocomplete"></div>
+                     <div class="autocomplete_box"></div>
                      <div class="selected"></div>
                      <input type="submit" value="Create Party" />
                    '''

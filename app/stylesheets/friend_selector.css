@@ -16,9 +16,11 @@
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    cursor: pointer;
     font: 14px Arial;
     color: #444444;
-    padding: 0 8px
+    padding: 0 8px;
+    width: 400px;    
 }
 
 #selector div.selected {

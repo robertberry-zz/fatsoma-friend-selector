@@ -27,17 +27,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @search.render()
       @search.on "autocomplete", _.bind(@do_autocomplete, @)
 
-    # Repositions the dropdown so it's absolutely positioned below the search
-    # input. This has to be done with calculated values via JavaScript.
-    position_dropdown: ->
-      dropdown = @$('.autocomplete')
-      search_input = @search.$el
-      {top, left} = dropdown.offset()
-      dropdown.css "position", "absolute"
-      dropdown.css "top", top
-      dropdown.css "left", left
-      dropdown.css "width", search_input.css "width"
-
     # Autocompletes for the given list of search terms. Probably could do with
     # some kind of controller for this.
     do_autocomplete: (terms) ->
@@ -49,22 +38,23 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
               name.toLowerCase().indexOf(term) == 0
         @autocomplete = new exports.UserAutocomplete
           collection: new models.Users matched
-        @$(".autocomplete").html @autocomplete.el
+        @$(".autocomplete_box").html @autocomplete.el
         @autocomplete.on "select", _.bind(@select_user, @)
+        @autocomplete.on "focus_input", =>
+          @search.$el.focus()
         @autocomplete.render()
       else
-        @$(".autocomplete").html ""
+        @$(".autocomplete_box").html ""
 
+    # Selects the given user, resets the search query
     select_user: (user) ->
       @selected.add_model user
-      @$(".search").val ""
-      @render_autocomplete()
+      @search.set_query ""
 
     render: ->
       super
       @$(".selected").html @selected.el
       @$(".search_box").html @search.el
-      @position_dropdown()
 
   class exports.SearchInput extends Backbone.View
     tagName: "input",
@@ -76,9 +66,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     events:
       "keyup": "on_key_up"
 
-    initialize: ->
-      # pass
-
+    # Key presses either fire re-rendering of the autocomplete, or if it's the
+    # down key focuses the first element of the autocomplete
     on_key_up: (event) ->
       if event.keyCode == utils.keyCodes.KEY_DOWN
         @trigger "focus_autocomplete"
@@ -118,12 +107,42 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
   class exports.UserAutocomplete extends extensions.CollectionView
     item_view: exports.UserAutocompleteItem
 
+    attributes:
+      class: "autocomplete"
+
+    events:
+      "keydown": "on_key_down"
+
     initialize: ->
       super
       select = _.bind(@select, @)
       _(@items).invoke "on", "select", select
       @on "add", (subView) -> subView.on "select", select
       @on "remove", (subView) -> subView.off "select", select
+
+    focused: no
+
+    focused_item: null
+
+    on_key_down: (event) ->
+      if event.keyCode == utils.keyCodes.KEY_UP
+        @prev()
+      else if event.keyCode == utils.keyCodes.KEY_DOWN
+        @next()
+
+    # Focuses next item in list
+    prev: ->
+      if @focused_item == 0
+        @trigger "focus_input"
+      else
+        @focus_item(@focused_item - 1)
+
+    # Focuses previous item in list
+    next: ->
+      if @focused_item == @items.length - 1
+        @focus_item 0
+      else
+        @focus_item(@focused_item + 1)
 
     select: (model) ->
       @trigger "select", model
@@ -132,9 +151,24 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       if n >= @items.length
         throw new exceptions.InvalidArgumentError("Attempting to focus item " +
           "#{n} but autocomplete only has #{@items.length} items.")
+      if n < 0
+        throw new exceptions.InvalidArgumentError("Attempting to focus item " +
+          "#{n}.")
       unless @focused_item == n
-        @items[@focused_item].unfocus()
+        if @focused_item
+          @items[@focused_item].unfocus()
         @items[n].focus()
+        @focused_item = n
+
+    float: ->
+      {top, left} = @$el.offset()
+      @$el.css "position", "absolute"
+      @$el.css "top", top
+      @$el.css "left", left
+
+    render: ->
+      super
+      @float()
 
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item

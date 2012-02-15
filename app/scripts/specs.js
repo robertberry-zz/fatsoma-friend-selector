@@ -167,7 +167,7 @@
         var autocomplete;
         autocomplete = null;
         beforeEach(function() {
-          return autocomplete = selector.$(".autocomplete");
+          return autocomplete = selector.$(".autocomplete_box");
         });
         it("should be initially empty", function() {
           return expect(autocomplete).toBeEmpty();
@@ -219,7 +219,6 @@
               });
               return it("should focus the search input if the user presses the up                key", function() {
                 var event_stub;
-                expect(view.focused).toBeTruthy();
                 event_stub = {
                   keyCode: utils.keyCodes.KEY_UP
                 };
