@@ -35,7 +35,7 @@
         });
         this.autocomplete.on("select", _.bind(this.select_user, this));
         this.autocomplete.on("focus_input", function() {
-          return _this.search.$el.focus();
+          return _this.search.$el.get(0).focus();
         });
         this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
         this.search.on("focus_autocomplete", function() {
@@ -76,7 +76,8 @@
 
       SearchInput.prototype.attributes = {
         type: "text",
-        "class": "search"
+        "class": "search",
+        tabindex: 0
       };
 
       SearchInput.prototype.events = {

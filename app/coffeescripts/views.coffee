@@ -30,7 +30,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         user_pool: @remaining_friends
       @autocomplete.on "select", _.bind(@select_user, @)
       @autocomplete.on "focus_input", =>
-        @search.$el.focus()
+        @search.$el.get(0).focus()
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
       @search.on "focus_autocomplete", =>
         # might not be any autocomplete items to focus
@@ -59,6 +59,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     attributes:
       type: "text"
       class: "search"
+      tabindex: 0
 
     events:
       "keyup": "on_key_up"
