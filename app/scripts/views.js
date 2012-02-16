@@ -264,6 +264,12 @@
 
       SelectedUsersItem.prototype.template = templates.selected_users_item;
 
+      SelectedUsersItem.prototype.events = {
+        ".remove-button click": "removeSelectedFriend"
+      };
+
+      SelectedUsersItem.prototype.removeSelectedFriend = function() {};
+
       return SelectedUsersItem;
 
     })(extensions.MustacheView);

@@ -189,8 +189,23 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item
-
+    events:
+      "click .remove": "remove"
+    
+    remove: (event) ->
+        @trigger "remove_item" @model
+    
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem
-
+    
+    initialize ->
+       _(items).invoke "on", "remove_item", removeItem
+        
+    events:
+      "remove_item"
+      
+    removeItem: (model) ->
+      remove: (model) -> @collection.remove model 
+      
+            
   exports
