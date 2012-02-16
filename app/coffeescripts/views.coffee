@@ -93,7 +93,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     # When clicked fires an event saying the given user has been selected
     on_click: (event) ->
-      console.debug "on click"
       @trigger "select", @model
 
     focus: ->

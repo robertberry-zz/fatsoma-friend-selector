@@ -123,7 +123,6 @@
       UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
 
       UserAutocompleteItem.prototype.on_click = function(event) {
-        console.debug("on click");
         return this.trigger("select", this.model);
       };
 
