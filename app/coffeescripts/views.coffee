@@ -209,9 +209,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     
     initialize ->
        _(items).invoke "on", "remove_item", removeItem
-        
-    events:
-      "remove_item"
       
     removeItem: (model) ->
       remove: (model) -> @collection.remove model 
