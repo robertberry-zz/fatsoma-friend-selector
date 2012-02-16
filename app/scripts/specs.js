@@ -214,12 +214,19 @@
           list = selector.$('.selected');
           return selected = selector.selected;
         });
-        return it("should remove selected items from the autocomplete dropdown", function() {
+        it("should remove selected items from the autocomplete dropdown", function() {
           var first_friend;
           first_friend = selector.friends.models[0];
           selected.add_model(first_friend);
           selector.search.set_query(first_friend.attributes.name);
           return expect(selector.autocomplete.collection.models).not.toContain(first_friend);
+        });
+        return describe("when I press delete on a selected friend", function() {
+          return beforeEach(function() {
+            var first_friend;
+            first_friend = selector.friends.models[0];
+            return selected.add_model(first_friend);
+          });
         });
       });
     });

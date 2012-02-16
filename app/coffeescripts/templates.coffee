@@ -10,5 +10,5 @@ define
                           <p>{{name}}</p>
                           '''
   selected_users_item: '''
-                       <p>{{name}}</p>
+                       <p>{{name}}</p><span class="remove-button">Remove</span>
                        '''
