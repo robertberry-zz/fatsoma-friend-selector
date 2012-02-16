@@ -29,10 +29,13 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         collection: new models.Users
         user_pool: @remaining_friends
       @autocomplete.on "select", _.bind(@select_user, @)
-      @autocomplete.on "focus_search", =>
+      @autocomplete.on "focus_input", =>
         @search.$el.focus()
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
-      @search.on "focus_autocomplete", _.bind(@autocomplete.focus, @autocomplete)
+      @search.on "focus_autocomplete", =>
+        # might not be any autocomplete items to focus
+        try
+          @autocomplete.focus()
       @search_focus_group = new utils.FocusGroup [@search.el, @autocomplete.el]
       @search_focus_group.on "focus", _.bind(@autocomplete.show, @autocomplete)
       @search_focus_group.on "blur", _.bind(@autocomplete.hide, @autocomplete)
@@ -60,13 +63,17 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     events:
       "keyup": "on_key_up"
 
+    last_search: null
+
     # Key presses either fire re-rendering of the autocomplete, or if it's the
     # down key focuses the first element of the autocomplete
     on_key_up: (event) ->
       if event.keyCode == utils.keyCodes.KEY_DOWN
         @trigger "focus_autocomplete"
       else
-        @trigger "autocomplete", @terms()
+        if @full_query() != @last_search
+          @last_search = @full_query()
+          @trigger "autocomplete", @terms()
 
     # Returns the full query as entered by the user
     full_query: ->
@@ -130,11 +137,19 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         @prev()
       else if event.keyCode == utils.keyCodes.KEY_DOWN
         @next()
+      else if event.keyCode in [utils.keyCodes.KEY_ENTER, \
+          utils.keyCodes.KEY_SPACE]
+        @items[@focused_item].$el.click()
+
+    unfocus: ->
+      @focused_item = null
+      @focused = no
 
     # Focuses next item in list
     prev: ->
       if @focused_item == 0
         @trigger "focus_input"
+        @unfocus()
       else
         @focus_item(@focused_item - 1)
 
@@ -146,18 +161,20 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         @focus_item(@focused_item + 1)
 
     select: (model) ->
+      @unfocus()
       @trigger "select", model
+      # return user to the input
+      @trigger "focus_input"
 
     focus: ->
       @focus_item 0
 
     focus_item: (n) ->
       if n >= @items.length
-        throw new exceptions.InvalidArgumentError("Attempting to focus item " +
-          "#{n} but autocomplete only has #{@items.length} items.")
+        throw "Attempting to focus item #{n} but autocomplete only " + \
+          "has #{@items.length} items."
       if n < 0
-        throw new exceptions.InvalidArgumentError("Attempting to focus item " +
-          "#{n}.")
+        throw "Attempting to focus item #{n}."
       unless @focused_item == n
         if @focused_item
           @items[@focused_item].unfocus()

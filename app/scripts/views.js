@@ -34,11 +34,15 @@
           user_pool: this.remaining_friends
         });
         this.autocomplete.on("select", _.bind(this.select_user, this));
-        this.autocomplete.on("focus_search", function() {
+        this.autocomplete.on("focus_input", function() {
           return _this.search.$el.focus();
         });
         this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
-        this.search.on("focus_autocomplete", _.bind(this.autocomplete.focus, this.autocomplete));
+        this.search.on("focus_autocomplete", function() {
+          try {
+            return _this.autocomplete.focus();
+          } catch (_error) {}
+        });
         this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
         this.search_focus_group.on("focus", _.bind(this.autocomplete.show, this.autocomplete));
         return this.search_focus_group.on("blur", _.bind(this.autocomplete.hide, this.autocomplete));
@@ -79,11 +83,16 @@
         "keyup": "on_key_up"
       };
 
+      SearchInput.prototype.last_search = null;
+
       SearchInput.prototype.on_key_up = function(event) {
         if (event.keyCode === utils.keyCodes.KEY_DOWN) {
           return this.trigger("focus_autocomplete");
         } else {
-          return this.trigger("autocomplete", this.terms());
+          if (this.full_query() !== this.last_search) {
+            this.last_search = this.full_query();
+            return this.trigger("autocomplete", this.terms());
+          }
         }
       };
 
@@ -169,16 +178,25 @@
       UserAutocomplete.prototype.focused_item = null;
 
       UserAutocomplete.prototype.on_key_down = function(event) {
+        var _ref;
         if (event.keyCode === utils.keyCodes.KEY_UP) {
           return this.prev();
         } else if (event.keyCode === utils.keyCodes.KEY_DOWN) {
           return this.next();
+        } else if ((_ref = event.keyCode) === utils.keyCodes.KEY_ENTER || _ref === utils.keyCodes.KEY_SPACE) {
+          return this.items[this.focused_item].$el.click();
         }
+      };
+
+      UserAutocomplete.prototype.unfocus = function() {
+        this.focused_item = null;
+        return this.focused = false;
       };
 
       UserAutocomplete.prototype.prev = function() {
         if (this.focused_item === 0) {
-          return this.trigger("focus_input");
+          this.trigger("focus_input");
+          return this.unfocus();
         } else {
           return this.focus_item(this.focused_item - 1);
         }
@@ -193,7 +211,9 @@
       };
 
       UserAutocomplete.prototype.select = function(model) {
-        return this.trigger("select", model);
+        this.unfocus();
+        this.trigger("select", model);
+        return this.trigger("focus_input");
       };
 
       UserAutocomplete.prototype.focus = function() {
@@ -202,11 +222,9 @@
 
       UserAutocomplete.prototype.focus_item = function(n) {
         if (n >= this.items.length) {
-          throw new exceptions.InvalidArgumentError("Attempting to focus item " + ("" + n + " but autocomplete only has " + this.items.length + " items."));
+          throw ("Attempting to focus item " + n + " but autocomplete only ") + ("has " + this.items.length + " items.");
         }
-        if (n < 0) {
-          throw new exceptions.InvalidArgumentError("Attempting to focus item " + ("" + n + "."));
-        }
+        if (n < 0) throw "Attempting to focus item " + n + ".";
         if (this.focused_item !== n) {
           if (this.focused_item) this.items[this.focused_item].unfocus();
           this.items[n].focus();

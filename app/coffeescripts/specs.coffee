@@ -126,11 +126,13 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
 
             it "should focus the search input if the user presses the up
                 key", ->
+              callback = jasmine.createSpy()
+              view.on "focus_input", callback
               event_stub =
                 keyCode: utils.keyCodes.KEY_UP
               view.on_key_down(event_stub)
               expect(view.focused).toBeFalsy()
-              expect(selector.$(".search").is(":focus")).toBeTruthy()
+              expect(callback).toHaveBeenCalled()
 
           describe "when the last item in the list is selected", ->
             beforeEach ->
