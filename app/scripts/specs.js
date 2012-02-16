@@ -206,7 +206,7 @@
           });
         });
       });
-      return describe("selected list", function() {
+      describe("selected list", function() {
         var list, selected;
         list = null;
         selected = null;
@@ -214,19 +214,28 @@
           list = selector.$('.selected');
           return selected = selector.selected;
         });
-        it("should remove selected items from the autocomplete dropdown", function() {
+        return it("should remove selected items from the autocomplete dropdown", function() {
           var first_friend;
           first_friend = selector.friends.models[0];
           selected.add_model(first_friend);
           selector.search.set_query(first_friend.attributes.name);
           return expect(selector.autocomplete.collection.models).not.toContain(first_friend);
         });
-        return describe("when I press delete on a selected friend", function() {
-          return beforeEach(function() {
-            var first_friend;
-            first_friend = selector.friends.models[0];
-            return selected.add_model(first_friend);
-          });
+      });
+      return describe("when I press remove a selected friend", function() {
+        beforeEach(function() {
+          var first_friend;
+          first_friend = selector.friends.models[0];
+          return selected.add_model(first_friend);
+        });
+        it("the friend should not appear in the selected friends", function() {
+          selected.items[0].remove();
+          return expect(selected.collection.models).toNotContain(first_friend);
+        });
+        return it("the friend should appear in the autocomplete when I search for        their name", function() {
+          selected.items[0].remove();
+          selector.search.set_query(first_friend.attributes.name);
+          return expect(selector.autocomplete.collection.models).toContain(first_friend);
         });
       });
     });

@@ -271,10 +271,12 @@
       SelectedUsersItem.prototype.template = templates.selected_users_item;
 
       SelectedUsersItem.prototype.events = {
-        ".remove-button click": "removeSelectedFriend"
+        "click .remove": "remove"
       };
 
-      SelectedUsersItem.prototype.removeSelectedFriend = function() {};
+      SelectedUsersItem.prototype.remove = function(event) {
+        return this.trigger("remove_item", this.model);
+      };
 
       return SelectedUsersItem;
 
@@ -288,6 +290,14 @@
       }
 
       SelectedUsers.prototype.item_view = exports.SelectedUsersItem;
+
+      SelectedUsers.prototype.initialize = function() {
+        return _(items).invoke("on", "remove_item", removeItem);
+      };
+
+      SelectedUsers.prototype.remove_item = function(model) {
+        return this.collection.remove(model);
+      };
 
       return SelectedUsers;
 
