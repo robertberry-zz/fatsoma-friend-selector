@@ -220,5 +220,3 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
          selected.items[0].remove()
          selector.search.set_query first_friend.attributes.name
          expect(selector.autocomplete.collection.models).toContain first_friend
-
-
