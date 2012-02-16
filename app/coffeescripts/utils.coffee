@@ -69,12 +69,14 @@ define ["jquery", "underscore", "backbone"], ->
       super items
       refresh = _.bind(@_refresh_focus, @)
       $(document).on "focus", "*", refresh
-      _(@items).invoke "on", "blur", =>
-        # for some reason on blur the body is momentarily the activeElement,
+      check_blur = =>
+         # for some reason on blur the body is momentarily the activeElement,
         # which would cause this to always think it's been deselected. So I
         # have to use a timeout here to compensate.
         clearTimeout(@checkBlur) if @checkBlur
         @checkBlur = setTimeout(refresh, 100)
+      _(@items).invoke "on", "blur", check_blur
+      _(@items).invoke "on", "blur", "*", check_blur
       @_refresh_focus()
 
     _refresh_focus: ->
