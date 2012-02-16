@@ -133,7 +133,8 @@
       UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
 
       UserAutocompleteItem.prototype.on_click = function(event) {
-        return this.trigger("select", this.model);
+        this.trigger("select", this.model);
+        return false;
       };
 
       UserAutocompleteItem.prototype.focus = function() {
