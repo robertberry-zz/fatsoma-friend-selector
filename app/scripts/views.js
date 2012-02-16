@@ -38,6 +38,7 @@
           return _this.search.$el.focus();
         });
         this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
+        this.search.on("focus_autocomplete", _.bind(this.autocomplete.focus, this.autocomplete));
         this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
         this.search_focus_group.on("focus", _.bind(this.autocomplete.show, this.autocomplete));
         return this.search_focus_group.on("blur", _.bind(this.autocomplete.hide, this.autocomplete));
@@ -126,7 +127,9 @@
         return this.trigger("select", this.model);
       };
 
-      UserAutocompleteItem.prototype.focus = function() {};
+      UserAutocompleteItem.prototype.focus = function() {
+        return this.$el.focus();
+      };
 
       UserAutocompleteItem.prototype.unfocus = function() {};
 

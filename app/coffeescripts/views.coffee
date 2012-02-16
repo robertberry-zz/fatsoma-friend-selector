@@ -32,6 +32,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @autocomplete.on "focus_search", =>
         @search.$el.focus()
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
+      @search.on "focus_autocomplete", _.bind(@autocomplete.focus, @autocomplete)
       @search_focus_group = new utils.FocusGroup [@search.el, @autocomplete.el]
       @search_focus_group.on "focus", _.bind(@autocomplete.show, @autocomplete)
       @search_focus_group.on "blur", _.bind(@autocomplete.hide, @autocomplete)
@@ -96,7 +97,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @trigger "select", @model
 
     focus: ->
-      #@$el.focus()
+      @$el.focus()
 
     unfocus: ->
       # pass
