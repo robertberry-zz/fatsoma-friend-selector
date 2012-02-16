@@ -37,7 +37,14 @@
         this.autocomplete.on("focus_search", function() {
           return _this.search.$el.focus();
         });
-        return this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
+        this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
+        this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
+        this.search_focus_group.on("focus", function() {
+          return console.debug("focus search");
+        });
+        return this.search_focus_group.on("blur", function() {
+          return console.debug("blur search");
+        });
       };
 
       FriendSelector.prototype.select_user = function(user) {
@@ -107,8 +114,14 @@
         UserAutocompleteItem.__super__.constructor.apply(this, arguments);
       }
 
+      UserAutocompleteItem.prototype.attributes = {
+        tabindex: 0
+      };
+
       UserAutocompleteItem.prototype.events = {
-        "click": "on_click"
+        "click": "on_click",
+        "mouseover": "focus",
+        "mouseout": "unfocus"
       };
 
       UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
@@ -117,13 +130,9 @@
         return this.trigger("select", this.model);
       };
 
-      UserAutocompleteItem.prototype.focus = function() {
-        return this.$el.addClass("focused");
-      };
+      UserAutocompleteItem.prototype.focus = function() {};
 
-      UserAutocompleteItem.prototype.unfocus = function() {
-        return this.$el.removeClass("focused");
-      };
+      UserAutocompleteItem.prototype.unfocus = function() {};
 
       return UserAutocompleteItem;
 
