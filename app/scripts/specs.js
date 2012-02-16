@@ -217,7 +217,7 @@
         return it("should remove selected items from the autocomplete dropdown", function() {
           var first_friend;
           first_friend = selector.friends.models[0];
-          selected.add_model(first_friend);
+          selected.collection.add(first_friend);
           selector.search.set_query(first_friend.attributes.name);
           return expect(selector.autocomplete.collection.models).not.toContain(first_friend);
         });

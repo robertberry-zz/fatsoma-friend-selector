@@ -31,31 +31,15 @@ define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
       if not collection
         throw new exceptions.InstantiationError("CollectionView must be " + \
           "initialized with a collection.")
-      collection.bind "add", _.bind(@add_model, @)
-      collection.bind "remove", _.bind(@remove_model, @)
+      collection.bind "add", _.bind(@render, @)
+      collection.bind "remove", _.bind(@render, @)
       @items = {}
-
-    # Adds a model to the view and re-renders
-    add_model: (model) ->
-      # Hmm not sure I like this. This is basically so if you call add_model
-      # directly, rather than adding a model to the collection, it adds it to
-      # the collection, which will then re-trigger this method. Maybe some
-      # refactoring is in order.
-      if not @collection.include model
-        @collection.add model
-        return
-      @render()
-
-    # Removes a model from the view and re-renders
-    remove_model: (model) ->
-      if @collection.include model
-        @collection.remove model
-        return
-      @render()
 
     # Re-renders the view and its subviews
     render: ->
+      _(@items).invoke "off"
       _(@items).invoke "remove"
+      @$el.html ""
       @items = @collection.map (model) =>
         new @item_view model: model
       @trigger "refresh", @items

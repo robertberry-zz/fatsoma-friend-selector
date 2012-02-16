@@ -53,31 +53,17 @@
         if (!collection) {
           throw new exceptions.InstantiationError("CollectionView must be " + "initialized with a collection.");
         }
-        collection.bind("add", _.bind(this.add_model, this));
-        collection.bind("remove", _.bind(this.remove_model, this));
+        collection.bind("add", _.bind(this.render, this));
+        collection.bind("remove", _.bind(this.render, this));
         return this.items = {};
-      };
-
-      CollectionView.prototype.add_model = function(model) {
-        if (!this.collection.include(model)) {
-          this.collection.add(model);
-          return;
-        }
-        return this.render();
-      };
-
-      CollectionView.prototype.remove_model = function(model) {
-        if (this.collection.include(model)) {
-          this.collection.remove(model);
-          return;
-        }
-        return this.render();
       };
 
       CollectionView.prototype.render = function() {
         var view, _i, _len, _ref, _results,
           _this = this;
+        _(this.items).invoke("off");
         _(this.items).invoke("remove");
+        this.$el.html("");
         this.items = this.collection.map(function(model) {
           return new _this.item_view({
             model: model
