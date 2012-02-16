@@ -119,7 +119,9 @@
       };
 
       UserAutocompleteItem.prototype.events = {
-        "click": "on_click"
+        "click": "on_click",
+        "mouseover": "focus",
+        "mouseout": "unfocus"
       };
 
       UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
@@ -129,12 +131,10 @@
       };
 
       UserAutocompleteItem.prototype.focus = function() {
-        return this.$el.addClass("focused");
+        return this.$el.focus();
       };
 
-      UserAutocompleteItem.prototype.unfocus = function() {
-        return this.$el.removeClass("focused");
-      };
+      UserAutocompleteItem.prototype.unfocus = function() {};
 
       return UserAutocompleteItem;
 

@@ -87,6 +87,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     events:
       "click": "on_click"
+      "mouseover": "focus"
+      "mouseout": "unfocus"
 
     template: templates.user_autocomplete_item
 
@@ -95,10 +97,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @trigger "select", @model
 
     focus: ->
-      @$el.addClass "focused"
+      @$el.focus()
 
     unfocus: ->
-      @$el.removeClass "focused"
+      # pass
 
   # Autocomplete dropdown
   class exports.UserAutocomplete extends extensions.CollectionView

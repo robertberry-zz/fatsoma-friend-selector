@@ -23,7 +23,7 @@
     width: 400px;    
 }
 
-#selector div.focused {
+#selector div:focus {
     background-color: #eee
 }
 
