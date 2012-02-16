@@ -209,7 +209,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     item_view: exports.SelectedUsersItem
 
     initialize: ->
-       _(items).invoke "on", "remove_item", removeItem
+       _(@items).invoke "on", "remove_item", removeItem
 
     remove_item: (model) ->
       @collection.remove model

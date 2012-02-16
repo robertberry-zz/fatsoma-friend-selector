@@ -292,7 +292,7 @@
       SelectedUsers.prototype.item_view = exports.SelectedUsersItem;
 
       SelectedUsers.prototype.initialize = function() {
-        return _(items).invoke("on", "remove_item", removeItem);
+        return _(this.items).invoke("on", "remove_item", removeItem);
       };
 
       SelectedUsers.prototype.remove_item = function(model) {
