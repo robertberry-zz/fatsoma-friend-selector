@@ -94,7 +94,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     events:
       "click": "on_click"
-      "mouseover": "focus"
+      "mouseover": "on_mouse_over"
       "mouseout": "unfocus"
 
     template: templates.user_autocomplete_item
@@ -102,7 +102,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     # When clicked fires an event saying the given user has been selected
     on_click: (event) ->
       @trigger "select", @model
-      return false
+      false
+
+    on_mouse_over: ->
+      @trigger "focus", @model
 
     focus: ->
       @$el.focus()
@@ -126,12 +129,19 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       super
       @user_pool = @options["user_pool"]
       select = _.bind(@select, @)
+      focus_model = _.bind(@focus_model, @)
       @on "refresh", (items) ->
         _(items).invoke "on", "select", select
+        _(items).invoke "on", "focus", focus_model
 
     focused: no
 
     focused_item: null
+
+    focus_model: (model) ->
+      n = @collection.indexOf model
+      console.debug n
+      @focus_item(n) if n != -1
 
     on_key_down: (event) ->
       if event.keyCode == utils.keyCodes.KEY_UP

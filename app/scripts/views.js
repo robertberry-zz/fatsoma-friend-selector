@@ -126,7 +126,7 @@
 
       UserAutocompleteItem.prototype.events = {
         "click": "on_click",
-        "mouseover": "focus",
+        "mouseover": "on_mouse_over",
         "mouseout": "unfocus"
       };
 
@@ -135,6 +135,10 @@
       UserAutocompleteItem.prototype.on_click = function(event) {
         this.trigger("select", this.model);
         return false;
+      };
+
+      UserAutocompleteItem.prototype.on_mouse_over = function() {
+        return this.trigger("focus", this.model);
       };
 
       UserAutocompleteItem.prototype.focus = function() {
@@ -165,18 +169,27 @@
       };
 
       UserAutocomplete.prototype.initialize = function() {
-        var select;
+        var focus_model, select;
         UserAutocomplete.__super__.initialize.apply(this, arguments);
         this.user_pool = this.options["user_pool"];
         select = _.bind(this.select, this);
+        focus_model = _.bind(this.focus_model, this);
         return this.on("refresh", function(items) {
-          return _(items).invoke("on", "select", select);
+          _(items).invoke("on", "select", select);
+          return _(items).invoke("on", "focus", focus_model);
         });
       };
 
       UserAutocomplete.prototype.focused = false;
 
       UserAutocomplete.prototype.focused_item = null;
+
+      UserAutocomplete.prototype.focus_model = function(model) {
+        var n;
+        n = this.collection.indexOf(model);
+        console.debug(n);
+        if (n !== -1) return this.focus_item(n);
+      };
 
       UserAutocomplete.prototype.on_key_down = function(event) {
         var _ref;
