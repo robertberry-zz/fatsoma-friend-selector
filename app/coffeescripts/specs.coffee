@@ -10,6 +10,7 @@
 require ["specs/utils", "specs/backbone_extensions"], ->
   # pass
 
+# base application specs
 require ["views", "utils", "models", "exceptions", "fixtures"], \
     (views, utils, models, exceptions, fixtures) ->
 
@@ -30,7 +31,6 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
       selector.render()
 
       @addMatchers
-        toBeVisible: () -> $(@actual).is ":visible"
         toBeEmpty: () ->
           contents = $(@actual).html()
           not contents || contents.trim() == ""

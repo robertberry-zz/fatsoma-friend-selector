@@ -130,9 +130,7 @@
         return this.trigger("select", this.model);
       };
 
-      UserAutocompleteItem.prototype.focus = function() {
-        return this.$el.focus();
-      };
+      UserAutocompleteItem.prototype.focus = function() {};
 
       UserAutocompleteItem.prototype.unfocus = function() {};
 

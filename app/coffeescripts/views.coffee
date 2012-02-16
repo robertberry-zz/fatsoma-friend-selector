@@ -97,7 +97,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @trigger "select", @model
 
     focus: ->
-      @$el.focus()
+      #@$el.focus()
 
     unfocus: ->
       # pass

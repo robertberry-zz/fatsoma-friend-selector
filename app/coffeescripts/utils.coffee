@@ -43,9 +43,9 @@ define ["jquery", "underscore", "backbone"], ->
   # it should. This is a workaround till they fix it
   exports.contains = (elem1, elem2) ->
     return no if elem1 == elem2
-    if "contains" in $(elem1)[0]
+    try
       $(elem1)[0].contains($(elem2)[0])
-    else
+    catch error
       no
 
   # Allow you to use Backbone.Events as a native CoffeeScript class
@@ -60,12 +60,21 @@ define ["jquery", "underscore", "backbone"], ->
       _(@items).any (item) ->
         item.is(el) || exports.contains(item, el)
 
+  # Allows you to keep track of the focus of a group of elements (and their
+  # children). Takes a list of elements and fires 'focus' events when any
+  # element in the group attains focus and 'blur' events when all elements in
+  # the group lose focus.
   class exports.FocusGroup extends exports.ElementGroup
     constructor: (items) ->
       super items
       refresh = _.bind(@_refresh_focus, @)
       $(document).on "focus", "*", refresh
-      _(@items).invoke "on", "blur", refresh
+      _(@items).invoke "on", "blur", =>
+        # for some reason on blur the body is momentarily the activeElement,
+        # which would cause this to always think it's been deselected. So I
+        # have to use a timeout here to compensate.
+        clearTimeout(@checkBlur) if @checkBlur
+        @checkBlur = setTimeout(refresh, 100)
       @_refresh_focus()
 
     _refresh_focus: ->
@@ -77,10 +86,6 @@ define ["jquery", "underscore", "backbone"], ->
       @has_focus = focused
 
     _has_focus: ->
-      console.debug $(document.activeElement)
       @has $(document.activeElement)
-
-
-
 
   exports

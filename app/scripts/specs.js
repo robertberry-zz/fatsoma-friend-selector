@@ -18,9 +18,6 @@
         });
         selector.render();
         return this.addMatchers({
-          toBeVisible: function() {
-            return $(this.actual).is(":visible");
-          },
           toBeEmpty: function() {
             var contents;
             contents = $(this.actual).html();

@@ -1,5 +1,24 @@
 # Specs for utils file
 require ["utils", "jquery", "underscore", "backbone"], (utils) ->
+  describe "contains", ->
+    elem1 = null
+    elem2 = null
+
+    beforeEach ->
+      elem1 = $ "<div></div>"
+      elem2 = $ "<p></p>"
+
+    describe "when elem1 contains elem2", ->
+      beforeEach ->
+        elem1.append elem2
+
+      it "should report elem1 contains elem2", ->
+        expect(utils.contains(elem1, elem2)).toBeTruthy()
+
+    describe "when elem1 does not contain elem2", ->
+      it "should not report elem1 contains elem2", ->
+        expect(utils.contains(elem1, elem2)).toBeFalsy()
+
   describe "ElementGroup", ->
     elem_group = null
     elems = null

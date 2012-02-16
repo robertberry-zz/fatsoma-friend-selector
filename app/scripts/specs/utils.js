@@ -1,6 +1,28 @@
 (function() {
 
   require(["utils", "jquery", "underscore", "backbone"], function(utils) {
+    describe("contains", function() {
+      var elem1, elem2;
+      elem1 = null;
+      elem2 = null;
+      beforeEach(function() {
+        elem1 = $("<div></div>");
+        return elem2 = $("<p></p>");
+      });
+      describe("when elem1 contains elem2", function() {
+        beforeEach(function() {
+          return elem1.append(elem2);
+        });
+        return it("should report elem1 contains elem2", function() {
+          return expect(utils.contains(elem1, elem2)).toBeTruthy();
+        });
+      });
+      return describe("when elem1 does not contain elem2", function() {
+        return it("should not report elem1 contains elem2", function() {
+          return expect(utils.contains(elem1, elem2)).toBeFalsy();
+        });
+      });
+    });
     describe("ElementGroup", function() {
       var all_elems, elem_group, elems, other_elems;
       elem_group = null;

@@ -1,6 +1,5 @@
 (function() {
-  var __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-    __hasProp = Object.prototype.hasOwnProperty,
+  var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   define(["jquery", "underscore", "backbone"], function() {
@@ -40,9 +39,9 @@
     }
     exports.contains = function(elem1, elem2) {
       if (elem1 === elem2) return false;
-      if (__indexOf.call($(elem1)[0], "contains") >= 0) {
+      try {
         return $(elem1)[0].contains($(elem2)[0]);
-      } else {
+      } catch (error) {
         return false;
       }
     };
@@ -78,11 +77,15 @@
       __extends(FocusGroup, _super);
 
       function FocusGroup(items) {
-        var refresh;
+        var refresh,
+          _this = this;
         FocusGroup.__super__.constructor.call(this, items);
         refresh = _.bind(this._refresh_focus, this);
         $(document).on("focus", "*", refresh);
-        _(this.items).invoke("on", "blur", refresh);
+        _(this.items).invoke("on", "blur", function() {
+          if (_this.checkBlur) clearTimeout(_this.checkBlur);
+          return _this.checkBlur = setTimeout(refresh, 100);
+        });
         this._refresh_focus();
       }
 
@@ -95,7 +98,6 @@
       };
 
       FocusGroup.prototype._has_focus = function() {
-        console.debug($(document.activeElement));
         return this.has($(document.activeElement));
       };
 
