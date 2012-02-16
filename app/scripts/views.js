@@ -44,7 +44,7 @@
       };
 
       FriendSelector.prototype.select_user = function(user) {
-        this.selected.add_model(user);
+        this.selected.collection.add(user);
         return this.search.set_query("");
       };
 
@@ -271,10 +271,10 @@
       SelectedUsersItem.prototype.template = templates.selected_users_item;
 
       SelectedUsersItem.prototype.events = {
-        "click .remove": "remove"
+        "click .remove-button": "remove"
       };
 
-      SelectedUsersItem.prototype.remove = function(event) {
+      SelectedUsersItem.prototype.remove = function() {
         return this.trigger("remove_item", this.model);
       };
 
@@ -292,7 +292,12 @@
       SelectedUsers.prototype.item_view = exports.SelectedUsersItem;
 
       SelectedUsers.prototype.initialize = function() {
-        return _(this.items).invoke("on", "remove_item", removeItem);
+        var remove;
+        SelectedUsers.__super__.initialize.apply(this, arguments);
+        remove = _.bind(this.remove_item, this);
+        return this.on("refresh", function(items) {
+          return _(items).invoke("on", "remove_item", remove);
+        });
       };
 
       SelectedUsers.prototype.remove_item = function(model) {

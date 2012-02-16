@@ -38,7 +38,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     # Selects the given user, resets the search query
     select_user: (user) ->
-      @selected.add_model user
+      @selected.collection.add user
       @search.set_query ""
 
     render: ->
@@ -200,16 +200,19 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
     template: templates.selected_users_item
 
     events:
-      "click .remove": "remove"
+      "click .remove-button": "remove"
 
-    remove: (event) ->
+    remove: ->
       @trigger "remove_item", @model
 
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem
 
     initialize: ->
-       _(@items).invoke "on", "remove_item", removeItem
+      super
+      remove = _.bind(@remove_item, @)
+      @on "refresh", (items) ->
+        _(items).invoke "on", "remove_item", remove
 
     remove_item: (model) ->
       @collection.remove model
