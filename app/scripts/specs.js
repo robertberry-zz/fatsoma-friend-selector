@@ -114,13 +114,15 @@
                 return view.focus_item(0);
               });
               return it("should focus the search input if the user presses the up                key", function() {
-                var event_stub;
+                var callback, event_stub;
+                callback = jasmine.createSpy();
+                view.on("focus_input", callback);
                 event_stub = {
                   keyCode: utils.keyCodes.KEY_UP
                 };
                 view.on_key_down(event_stub);
                 expect(view.focused).toBeFalsy();
-                return expect(selector.$(".search").is(":focus")).toBeTruthy();
+                return expect(callback).toHaveBeenCalled();
               });
             });
             return describe("when the last item in the list is selected", function() {
