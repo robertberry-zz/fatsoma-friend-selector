@@ -205,18 +205,18 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
         selected.add_model first_friend
         selector.search.set_query first_friend.attributes.name
         expect(selector.autocomplete.collection.models).not.toContain first_friend
-       
-       describe "when I press remove on a selected friend", ->
-                  
-         beforeEach ->
-           first_friend = selector.friends.models[0]
-           selected.add_model first_friend    
-         
-         it "should not appear in the selected friends", ->
-           selected.items[0].remove() 
-           expect(selected.collection.models).toNotContain first_friend
-           
-         it "should appear in the autocomplete when I search for their name", ->
-           selected.items[0].remove()   
-           selector.search.set_query first_friend.attributes.name
-           expect(selector.autocomplete.collection.models).toContain first_friend
+
+     describe "when I press remove a selected friend", ->
+       beforeEach ->
+         first_friend = selector.friends.models[0]
+         selected.add_model first_friend
+
+       it "the friend should not appear in the selected friends", ->
+         selected.items[0].remove()
+         expect(selected.collection.models).toNotContain first_friend
+
+       it "the friend should appear in the autocomplete when I search for
+        their name", ->
+         selected.items[0].remove()
+         selector.search.set_query first_friend.attributes.name
+         expect(selector.autocomplete.collection.models).toContain first_friend

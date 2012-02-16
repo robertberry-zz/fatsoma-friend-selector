@@ -39,12 +39,8 @@
         });
         this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
         this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
-        this.search_focus_group.on("focus", function() {
-          return console.debug("focus search");
-        });
-        return this.search_focus_group.on("blur", function() {
-          return console.debug("blur search");
-        });
+        this.search_focus_group.on("focus", _.bind(this.autocomplete.show, this.autocomplete));
+        return this.search_focus_group.on("blur", _.bind(this.autocomplete.hide, this.autocomplete));
       };
 
       FriendSelector.prototype.select_user = function(user) {
@@ -243,6 +239,7 @@
           this.collection.add(this.user_pool.filter(query));
           return this.show();
         } else {
+          this.collection.remove(this.collection.models);
           return this.hide();
         }
       };
@@ -274,10 +271,12 @@
       SelectedUsersItem.prototype.template = templates.selected_users_item;
 
       SelectedUsersItem.prototype.events = {
-        ".remove-button click": "removeSelectedFriend"
+        "click .remove": "remove"
       };
 
-      SelectedUsersItem.prototype.removeSelectedFriend = function() {};
+      SelectedUsersItem.prototype.remove = function(event) {
+        return this.trigger("remove_item", this.model);
+      };
 
       return SelectedUsersItem;
 
@@ -291,6 +290,14 @@
       }
 
       SelectedUsers.prototype.item_view = exports.SelectedUsersItem;
+
+      SelectedUsers.prototype.initialize = function() {
+        return _(items).invoke("on", "remove_item", removeItem);
+      };
+
+      SelectedUsers.prototype.remove_item = function(model) {
+        return this.collection.remove(model);
+      };
 
       return SelectedUsers;
 

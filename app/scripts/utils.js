@@ -77,15 +77,17 @@
       __extends(FocusGroup, _super);
 
       function FocusGroup(items) {
-        var refresh,
+        var check_blur, refresh,
           _this = this;
         FocusGroup.__super__.constructor.call(this, items);
         refresh = _.bind(this._refresh_focus, this);
         $(document).on("focus", "*", refresh);
-        _(this.items).invoke("on", "blur", function() {
+        check_blur = function() {
           if (_this.checkBlur) clearTimeout(_this.checkBlur);
           return _this.checkBlur = setTimeout(refresh, 100);
-        });
+        };
+        _(this.items).invoke("on", "blur", check_blur);
+        _(this.items).invoke("on", "blur", "*", check_blur);
         this._refresh_focus();
       }
 

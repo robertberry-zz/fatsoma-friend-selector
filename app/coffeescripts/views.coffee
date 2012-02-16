@@ -32,10 +32,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @autocomplete.on "focus_search", =>
         @search.$el.focus()
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
-
       @search_focus_group = new utils.FocusGroup [@search.el, @autocomplete.el]
-      @search_focus_group.on "focus", -> console.debug "focus search"
-      @search_focus_group.on "blur", -> console.debug "blur search"
+      @search_focus_group.on "focus", _.bind(@autocomplete.show, @autocomplete)
+      @search_focus_group.on "blur", _.bind(@autocomplete.hide, @autocomplete)
 
     # Selects the given user, resets the search query
     select_user: (user) ->
@@ -184,6 +183,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         @collection.add @user_pool.filter query
         @show()
       else
+        @collection.remove @collection.models
         @hide()
 
     hide: ->
@@ -198,20 +198,28 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item
+
     events:
       "click .remove": "remove"
-    
+
     remove: (event) ->
-        @trigger "remove_item" @model
-    
+      @trigger "remove_item", @model
+
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem
-    
-    initialize ->
+
+    initialize: ->
        _(items).invoke "on", "remove_item", removeItem
+<<<<<<< HEAD
       
     removeItem: (model) ->
       remove: (model) -> @collection.remove model 
       
             
+=======
+
+    remove_item: (model) ->
+      @collection.remove model
+
+>>>>>>> 15a27689ee70446f16f65aeea7d2114d0f84cc05
   exports
