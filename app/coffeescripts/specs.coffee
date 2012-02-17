@@ -182,7 +182,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
 
           it "should highlight the matched terms in the names", ->
             for item in view.items
-              expect(item.$('.highlight').val()).toEqual search_term
+              expect(item.$('.highlight').html()).toEqual search_term
 
         describe "when an item is clicked", ->
           it "should fire the select event with the proper model", ->
@@ -191,12 +191,6 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
             first_sub_view = view.items[0]
             first_sub_view.$el.click()
             expect(callback).toHaveBeenCalledWith(first_sub_view.model)
-
-        describe "the html", ->
-          it "should contain the names of all the matched users", ->
-            for user in view.collection.models
-              name = user.get "name"
-              expect(autocomplete.html()).toContain name
 
     describe "selected list", ->
       list = null

@@ -161,6 +161,39 @@
 
       UserAutocompleteItem.prototype.unfocus = function() {};
 
+      UserAutocompleteItem.prototype.highlight = function(terms) {
+        this.terms = terms;
+        return this.render();
+      };
+
+      UserAutocompleteItem.prototype.highlighted_name = function() {
+        var name, names,
+          _this = this;
+        name = this.model.attributes.name;
+        if (!this.terms) return name;
+        names = name.split(/\s+/);
+        names = _(names).map(function(name) {
+          var context, longest_match, lower_name, matched_terms;
+          lower_name = name.toLowerCase();
+          matched_terms = _(_this.terms).filter(function(term) {
+            return lower_name.indexOf(term.toLowerCase()) === 0;
+          });
+          if (matched_terms.length > 0) {
+            longest_match = _(matched_terms).max(function(term) {
+              return term.length;
+            });
+            context = {
+              highlighted: name.substr(0, longest_match.length),
+              rest: name.substr(longest_match.length)
+            };
+            return Mustache.render(templates.highlighted_name, context);
+          } else {
+            return name;
+          }
+        });
+        return names.join(" ");
+      };
+
       return UserAutocompleteItem;
 
     })(extensions.MustacheView);
@@ -185,14 +218,16 @@
       };
 
       UserAutocomplete.prototype.initialize = function() {
-        var focus_model, select;
+        var focus_model, select,
+          _this = this;
         UserAutocomplete.__super__.initialize.apply(this, arguments);
         this.user_pool = this.options["user_pool"];
         select = _.bind(this.select, this);
         focus_model = _.bind(this.focus_model, this);
         return this.on("refresh", function(items) {
           _(items).invoke("on", "select", select);
-          return _(items).invoke("on", "focus", focus_model);
+          _(items).invoke("on", "focus", focus_model);
+          if (_this.terms) return _(items).invoke("highlight", _this.terms);
         });
       };
 
@@ -202,6 +237,7 @@
 
       UserAutocomplete.prototype.focus_model = function(model) {
         var n;
+        if (!this.collection.include(model)) throw "Model not in collection.";
         n = this.collection.indexOf(model);
         if (n !== -1) return this.focus_item(n);
       };
@@ -275,6 +311,7 @@
       UserAutocomplete.prototype.filter = function(terms) {
         var query,
           _this = this;
+        this.terms = terms;
         if (terms && terms.length > 0 && _.any(terms)) {
           query = function(user) {
             return _(terms).all(function(term) {
@@ -328,15 +365,6 @@
 
       SelectedUsersItem.prototype.remove = function() {
         return this.trigger("remove_item", this.model);
-      };
-
-      SelectedUsersItem.prototype.highlight = function(term) {
-        this.term = term;
-        return this.render();
-      };
-
-      SelectedUsersItem.prototype.render = function() {
-        return SelectedUsersItem.__super__.render.apply(this, arguments);
       };
 
       return SelectedUsersItem;

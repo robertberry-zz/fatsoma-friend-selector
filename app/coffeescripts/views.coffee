@@ -60,6 +60,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       # only render here so it's inserted before floated
       @autocomplete.render()
 
+  # Friend search text box
   class exports.SearchInput extends Backbone.View
     tagName: "input",
 
@@ -98,6 +99,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     terms: ->
       @full_query().toLowerCase().split /\s+/
 
+  # User in the autocomplete dropdown
   class exports.UserAutocompleteItem extends extensions.MustacheView
     tagName: "li"
 
@@ -125,7 +127,33 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     unfocus: ->
       # pass
 
-  # Autocomplete dropdown
+    highlight: (terms) ->
+      @terms = terms
+      @render()
+
+    highlighted_name: ->
+      name = @model.attributes.name
+      if not @terms
+        return name
+      # for each name in the name, find the highlighted portion
+      names = name.split /\s+/
+      names = _(names).map (name) =>
+        lower_name = name.toLowerCase()
+        matched_terms = _(@terms).filter (term) ->
+          lower_name.indexOf(term.toLowerCase()) == 0
+        if matched_terms.length > 0
+          longest_match = _(matched_terms).max (term) -> term.length
+          context =
+            highlighted: name.substr 0, longest_match.length
+            rest: name.substr longest_match.length
+          return Mustache.render templates.highlighted_name, context
+        else
+          # not matched
+          return name
+
+      return names.join " "
+
+  # User autocomplete dropdown
   class exports.UserAutocomplete extends extensions.CollectionView
     item_view: exports.UserAutocompleteItem
 
@@ -144,15 +172,21 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       @user_pool = @options["user_pool"]
       select = _.bind(@select, @)
       focus_model = _.bind(@focus_model, @)
-      @on "refresh", (items) ->
+      @on "refresh", (items) =>
         _(items).invoke "on", "select", select
         _(items).invoke "on", "focus", focus_model
+        if @terms
+          _(items).invoke "highlight", @terms
 
     focused: no
 
     focused_item: null
 
+    # focuses the given model in the dropdown. throws an error if the model is
+    # not in the collection
     focus_model: (model) ->
+      unless @collection.include model
+        throw "Model not in collection."
       n = @collection.indexOf model
       @focus_item(n) if n != -1
 
@@ -165,6 +199,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
           utils.keyCodes.KEY_SPACE]
         @items[@focused_item].$el.click()
 
+    # unfocuses the dropdown
     unfocus: ->
       @focused_item = null
       @focused = no
@@ -184,15 +219,20 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       else
         @focus_item(@focused_item + 1)
 
+    # selects the given model, telling observers that it was chosen and
+    # focusing the input
     select: (model) ->
       @unfocus()
       @trigger "select", model
       # return user to the input
       @trigger "focus_input"
 
+    # focuses first item in list
     focus: ->
       @focus_item 0
 
+    # focuses the given item in the list by numeric index. throws an error if
+    # the item does not exist
     focus_item: (n) ->
       if n >= @items.length
         throw "Attempting to focus item #{n} but autocomplete only " + \
@@ -205,6 +245,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         @items[n].focus()
         @focused_item = n
 
+    # css fix to make the list float below the text box (is done with absolute
+    # positioning; javascript needs to calculate the top and left valuesx)
     float: ->
       if not @floated
         {top, left} = @$el.offset()
@@ -215,6 +257,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
 
     # filters the shown users from the user pool given the search terms
     filter: (terms) ->
+      @terms = terms
       if terms && terms.length > 0 && _.any terms
         query = (user) =>
           _(terms).all (term) =>
@@ -228,9 +271,11 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         @collection.remove @collection.models
         @hide()
 
+    # hides the dropdown
     hide: ->
       @$el.hide()
 
+    # shows the dropdown
     show: ->
       return if @collection.models.length == 0
       @$el.show()
@@ -248,14 +293,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
 
     remove: ->
       @trigger "remove_item", @model
-
-    highlight: (term) ->
-      @term = term
-      @render()
-
-    render: ->
-      super
-
 
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem

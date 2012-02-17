@@ -5,11 +5,13 @@
   define(["utils", "jquery", "underscore", "backbone", "mustache/mustache"], function(utils) {
     var create_context, exports;
     exports = {};
-    create_context = function(model) {
-      var context, methods;
+    create_context = function(view, model) {
+      var context, model_methods, view_methods;
       context = {};
-      methods = utils.methods(model);
-      _.extend(context, methods);
+      view_methods = utils.methods(view);
+      model_methods = utils.methods(model);
+      _.extend(context, view_methods);
+      _.extend(context, model_methods);
       _.extend(context, model.attributes);
       return context;
     };
@@ -24,7 +26,7 @@
       MustacheView.prototype.render = function() {
         var context, model;
         if (this.model) {
-          context = new create_context(this.model);
+          context = new create_context(this, this.model);
         } else if (this.collection) {
           context = {
             collection: (function() {
@@ -33,7 +35,7 @@
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 model = _ref[_i];
-                _results.push(create_context(model));
+                _results.push(create_context(this, model));
               }
               return _results;
             }).call(this)

@@ -188,12 +188,12 @@
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 item = _ref[_i];
-                _results.push(expect(item.$('.highlight').val()).toEqual(search_term));
+                _results.push(expect(item.$('.highlight').html()).toEqual(search_term));
               }
               return _results;
             });
           });
-          describe("when an item is clicked", function() {
+          return describe("when an item is clicked", function() {
             return it("should fire the select event with the proper model", function() {
               var callback, first_sub_view;
               callback = jasmine.createSpy();
@@ -201,19 +201,6 @@
               first_sub_view = view.items[0];
               first_sub_view.$el.click();
               return expect(callback).toHaveBeenCalledWith(first_sub_view.model);
-            });
-          });
-          return describe("the html", function() {
-            return it("should contain the names of all the matched users", function() {
-              var name, user, _i, _len, _ref, _results;
-              _ref = view.collection.models;
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                user = _ref[_i];
-                name = user.get("name");
-                _results.push(expect(autocomplete.html()).toContain(name));
-              }
-              return _results;
             });
           });
         });

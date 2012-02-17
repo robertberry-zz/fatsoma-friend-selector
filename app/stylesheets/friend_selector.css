@@ -54,3 +54,7 @@
     right: 10px;
     cursor: pointer;
 }
+
+#selector .highlight {
+    text-decoration: underline
+}

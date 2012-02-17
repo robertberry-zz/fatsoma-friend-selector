@@ -11,10 +11,12 @@ define ["utils", "jquery", "underscore", "backbone", "mustache/mustache"], \
   # attributes directly (rather than through the .attributes property, as
   # you will mostly be just accessing attributes) and also method
   # names. Property names override method names.
-  create_context = (model) ->
+  create_context = (view, model) ->
     context = {}
-    methods = utils.methods(model)
-    _.extend(context, methods)
+    view_methods = utils.methods view
+    model_methods = utils.methods model
+    _.extend(context, view_methods)
+    _.extend(context, model_methods)
     _.extend(context, model.attributes)
     context
 
@@ -26,9 +28,10 @@ define ["utils", "jquery", "underscore", "backbone", "mustache/mustache"], \
   class exports.MustacheView extends Backbone.View
     render: ->
       if @model
-        context = new create_context(@model)
+        context = new create_context(@, @model)
       else if @collection
-        context = {collection: create_context(model) for model in @collection.models}
+        context = {collection: create_context(@, model) for model in \
+          @collection.models}
       else
         context = {}
       @$el.html Mustache.render(@template, context)

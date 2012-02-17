@@ -8,7 +8,7 @@ define
                      <input type="submit" value="Create Party" />
                    '''
   user_autocomplete_item: '''
-                          {{name}}
+                          {{{highlighted_name}}}
                           '''
   selected_users_item: '''
                        <div class="selected_user">{{name}}
@@ -18,3 +18,6 @@ define
   selected_hidden_input: '''
                          <input type="hidden" name="selected[]" value="{{id}}" />
                          '''
+  highlighted_name: '''
+                    <span class="highlight">{{highlighted}}</span>{{rest}}
+                    '''
