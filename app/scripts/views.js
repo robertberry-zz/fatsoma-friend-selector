@@ -323,7 +323,7 @@
       SelectedUsersItem.prototype.template = templates.selected_users_item;
 
       SelectedUsersItem.prototype.events = {
-        "click .remove-button": "remove"
+        "click .remove_button": "remove"
       };
 
       SelectedUsersItem.prototype.remove = function() {

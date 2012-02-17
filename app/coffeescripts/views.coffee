@@ -244,7 +244,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     template: templates.selected_users_item
 
     events:
-      "click .remove-button": "remove"
+      "click .remove_button": "remove"
 
     remove: ->
       @trigger "remove_item", @model
