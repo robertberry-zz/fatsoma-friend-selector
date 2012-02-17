@@ -171,6 +171,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       class: "autocomplete"
 
     events:
+      "keydown": "on_key_down"
       "keypress": "on_key_press"
 
     # should specify a 'user_pool' from which the users are taken to populate
@@ -197,6 +198,12 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         throw "Model not in collection."
       n = @collection.indexOf model
       @focus_item(n) if n != -1
+
+    on_key_down: (event) ->
+      # chrome for some reason doesn't seem to register keypress events, but
+      # we don't want to move twice as far in other browsers
+      if $.browser.webkit
+        @on_key_press(event)
 
     on_key_press: (event) ->
       if event.keyCode == utils.keyCodes.KEY_UP

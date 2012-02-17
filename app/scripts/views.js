@@ -221,6 +221,7 @@
       };
 
       UserAutocomplete.prototype.events = {
+        "keydown": "on_key_down",
         "keypress": "on_key_press"
       };
 
@@ -247,6 +248,10 @@
         if (!this.collection.include(model)) throw "Model not in collection.";
         n = this.collection.indexOf(model);
         if (n !== -1) return this.focus_item(n);
+      };
+
+      UserAutocomplete.prototype.on_key_down = function(event) {
+        if ($.browser.webkit) return this.on_key_press(event);
       };
 
       UserAutocomplete.prototype.on_key_press = function(event) {
