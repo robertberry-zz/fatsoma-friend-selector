@@ -11,6 +11,6 @@ define
                           '''
   selected_users_item: '''
                        <div class="selected_user">{{name}}
-                         <span class="remove-button">Remove</span>
+                         <span class="remove_button">Remove</span>
                        </div>
                        '''

@@ -223,18 +223,18 @@
           selector.search.set_query(first_friend.attributes.name);
           return expect(selector.autocomplete.collection.models).not.toContain(first_friend);
         });
-        return describe("when I press remove a selected friend", function() {
+        return describe("when I press remove on a selected friend", function() {
           var first_friend;
           first_friend = null;
           beforeEach(function() {
             first_friend = selector.friends.models[0];
             selected.collection.add(first_friend);
-            return selected.items[0].remove();
+            return selected.items[0].$('.remove_button').click();
           });
-          it("the friend should not appear in the selected friends", function() {
+          it("should not appear in the selected friends", function() {
             return expect(selected.collection.models).toNotContain(first_friend);
           });
-          return it("the friend should appear in the autocomplete when I search for        their name", function() {
+          return it("should appear in the autocomplete when I search for        their name", function() {
             selector.search.set_query(first_friend.attributes.name);
             return expect(selector.autocomplete.collection.models).toContain(first_friend);
           });
