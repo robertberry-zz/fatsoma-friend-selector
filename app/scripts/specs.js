@@ -1,6 +1,6 @@
 (function() {
 
-  require(["specs/utils", "specs/backbone_extensions"], function() {});
+  require(["specs/jquery_extensions", "specs/utils", "specs/backbone_extensions"], function() {});
 
   require(["views", "utils", "models", "exceptions", "fixtures"], function(views, utils, models, exceptions, fixtures) {
     return describe("FriendSelector", function() {
@@ -55,7 +55,7 @@
           event_stub = {
             keyCode: utils.keyCodes.KEY_DOWN
           };
-          search_box.on_key_up(event_stub);
+          search_box.on_key_down(event_stub);
           return expect(callback).toHaveBeenCalled();
         });
       });

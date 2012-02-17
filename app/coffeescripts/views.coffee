@@ -3,8 +3,8 @@
 # Author: Robert Berry
 # Created: 9th Feb 2012
 
-define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
-    (models, templates, exceptions, extensions, utils) ->
+define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
+    "jquery_extensions"], (models, templates, exceptions, extensions, utils) ->
   exports = {}
 
   # Main view
@@ -30,7 +30,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
         user_pool: @remaining_friends
       @autocomplete.on "select", _.bind(@select_user, @)
       @autocomplete.on "focus_input", =>
-        @search.$el.get(0).focus()
+        input = @search.$el
+        input.get(0).focus()
+        # move cursor to end
+        input.setCursorPosition(input.val().length)
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
       @search.on "focus_autocomplete", =>
         # might not be any autocomplete items to focus
@@ -63,18 +66,20 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     events:
       "keyup": "on_key_up"
+      "keydown": "on_key_down"
 
     last_search: null
 
-    # Key presses either fire re-rendering of the autocomplete, or if it's the
-    # down key focuses the first element of the autocomplete
-    on_key_up: (event) ->
+    # If the user presses the down key focus the autocomplete
+    on_key_down: (event) ->
       if event.keyCode == utils.keyCodes.KEY_DOWN
         @trigger "focus_autocomplete"
-      else
-        if @full_query() != @last_search
-          @last_search = @full_query()
-          @trigger "autocomplete", @terms()
+
+    # When input changes re-render autocomplete
+    on_key_up: (event) ->
+      if @full_query() != @last_search
+        @last_search = @full_query()
+        @trigger "autocomplete", @terms()
 
     # Returns the full query as entered by the user
     full_query: ->
@@ -90,6 +95,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       @full_query().toLowerCase().split /\s+/
 
   class exports.UserAutocompleteItem extends extensions.MustacheView
+    tagName: "li"
+
+    template: templates.user_autocomplete_item
+
     attributes:
       tabindex: 0
 
@@ -97,8 +106,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
       "click": "on_click"
       "mouseover": "on_mouse_over"
       "mouseout": "unfocus"
-
-    template: templates.user_autocomplete_item
 
     # When clicked fires an event saying the given user has been selected
     on_click: (event) ->
@@ -117,6 +124,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
   # Autocomplete dropdown
   class exports.UserAutocomplete extends extensions.CollectionView
     item_view: exports.UserAutocompleteItem
+
+    tagName: "ul"
 
     attributes:
       class: "autocomplete"
@@ -141,7 +150,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils"], \
 
     focus_model: (model) ->
       n = @collection.indexOf model
-      console.debug n
       @focus_item(n) if n != -1
 
     on_key_down: (event) ->
