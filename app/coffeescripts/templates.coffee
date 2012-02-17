@@ -10,7 +10,7 @@ define
                           <p>{{name}}</p>
                           '''
   selected_users_item: '''
-                       <p>{{name}}
+                       <div class="selected_user">{{name}}
                          <span class="remove-button">Remove</span>
-                       </p>
+                       </div>
                        '''

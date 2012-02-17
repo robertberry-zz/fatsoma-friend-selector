@@ -20,7 +20,8 @@
     font: 14px Arial;
     color: #444444;
     padding: 0 8px;
-    width: 400px;    
+    width: 400px;
+    z-index: 100
 }
 
 #selector div:focus {
@@ -28,5 +29,19 @@
 }
 
 #selector div.selected {
+    font: 12px Arial;
     border: 2px solid #ccc;
+}
+
+#selector div.selected_user {
+    position: relative;
+    border: 1px solid #eee;
+    width: 250px;
+    padding: 10px;
+}
+
+#selector div.selected_user span {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
 }
