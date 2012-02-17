@@ -11,20 +11,26 @@
     width: 400px;
 }
 
-#selector div.autocomplete {
+#selector .autocomplete {
     background-color: white;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     cursor: pointer;
+    list-style: none;
     font: 14px Arial;
     color: #444444;
-    padding: 0 8px;
+    margin: 0;
+    padding: 0;
     width: 400px;
     z-index: 100
 }
 
-#selector div:focus {
+#selector ul.autocomplete li {
+    padding: 10px
+}
+
+#selector li:focus {
     background-color: #eee
 }
 

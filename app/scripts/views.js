@@ -127,6 +127,10 @@
         UserAutocompleteItem.__super__.constructor.apply(this, arguments);
       }
 
+      UserAutocompleteItem.prototype.tagName = "li";
+
+      UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
+
       UserAutocompleteItem.prototype.attributes = {
         tabindex: 0
       };
@@ -136,8 +140,6 @@
         "mouseover": "on_mouse_over",
         "mouseout": "unfocus"
       };
-
-      UserAutocompleteItem.prototype.template = templates.user_autocomplete_item;
 
       UserAutocompleteItem.prototype.on_click = function(event) {
         this.trigger("select", this.model);
@@ -166,6 +168,8 @@
       }
 
       UserAutocomplete.prototype.item_view = exports.UserAutocompleteItem;
+
+      UserAutocomplete.prototype.tagName = "ul";
 
       UserAutocomplete.prototype.attributes = {
         "class": "autocomplete"

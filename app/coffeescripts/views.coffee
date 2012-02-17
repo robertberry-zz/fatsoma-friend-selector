@@ -95,6 +95,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       @full_query().toLowerCase().split /\s+/
 
   class exports.UserAutocompleteItem extends extensions.MustacheView
+    tagName: "li"
+
+    template: templates.user_autocomplete_item
+
     attributes:
       tabindex: 0
 
@@ -102,8 +106,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       "click": "on_click"
       "mouseover": "on_mouse_over"
       "mouseout": "unfocus"
-
-    template: templates.user_autocomplete_item
 
     # When clicked fires an event saying the given user has been selected
     on_click: (event) ->
@@ -122,6 +124,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
   # Autocomplete dropdown
   class exports.UserAutocomplete extends extensions.CollectionView
     item_view: exports.UserAutocompleteItem
+
+    tagName: "ul"
 
     attributes:
       class: "autocomplete"

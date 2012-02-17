@@ -7,7 +7,7 @@ define
                      <input type="submit" value="Create Party" />
                    '''
   user_autocomplete_item: '''
-                          <p>{{name}}</p>
+                          {{name}}
                           '''
   selected_users_item: '''
                        <div class="selected_user">{{name}}
