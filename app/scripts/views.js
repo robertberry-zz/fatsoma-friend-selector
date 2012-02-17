@@ -2,7 +2,7 @@
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  define(["models", "templates", "exceptions", "backbone_extensions", "utils"], function(models, templates, exceptions, extensions, utils) {
+  define(["models", "templates", "exceptions", "backbone_extensions", "utils", "jquery_extensions"], function(models, templates, exceptions, extensions, utils) {
     var exports;
     exports = {};
     exports.FriendSelector = (function(_super) {
@@ -35,7 +35,10 @@
         });
         this.autocomplete.on("select", _.bind(this.select_user, this));
         this.autocomplete.on("focus_input", function() {
-          return _this.search.$el.get(0).focus();
+          var input;
+          input = _this.search.$el;
+          input.get(0).focus();
+          return input.setCursorPosition(input.val().length);
         });
         this.search.on("autocomplete", _.bind(this.autocomplete.filter, this.autocomplete));
         this.search.on("focus_autocomplete", function() {
@@ -81,19 +84,22 @@
       };
 
       SearchInput.prototype.events = {
-        "keyup": "on_key_up"
+        "keyup": "on_key_up",
+        "keydown": "on_key_down"
       };
 
       SearchInput.prototype.last_search = null;
 
-      SearchInput.prototype.on_key_up = function(event) {
+      SearchInput.prototype.on_key_down = function(event) {
         if (event.keyCode === utils.keyCodes.KEY_DOWN) {
           return this.trigger("focus_autocomplete");
-        } else {
-          if (this.full_query() !== this.last_search) {
-            this.last_search = this.full_query();
-            return this.trigger("autocomplete", this.terms());
-          }
+        }
+      };
+
+      SearchInput.prototype.on_key_up = function(event) {
+        if (this.full_query() !== this.last_search) {
+          this.last_search = this.full_query();
+          return this.trigger("autocomplete", this.terms());
         }
       };
 
@@ -188,7 +194,6 @@
       UserAutocomplete.prototype.focus_model = function(model) {
         var n;
         n = this.collection.indexOf(model);
-        console.debug(n);
         if (n !== -1) return this.focus_item(n);
       };
 

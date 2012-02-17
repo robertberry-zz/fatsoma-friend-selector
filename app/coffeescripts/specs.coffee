@@ -7,7 +7,7 @@
 # Date: February 10th 2012
 
 # get other specs
-require ["specs/utils", "specs/backbone_extensions"], ->
+require ["specs/jquery_extensions", "specs/utils", "specs/backbone_extensions"], ->
   # pass
 
 # base application specs
@@ -62,7 +62,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
         search_box.on "focus_autocomplete", callback
         event_stub =
           keyCode: utils.keyCodes.KEY_DOWN
-        search_box.on_key_up event_stub
+        search_box.on_key_down event_stub
         expect(callback).toHaveBeenCalled()
 
     describe "autocomplete dropdown", ->
@@ -211,7 +211,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
 
       describe "when I press remove a selected friend", ->
         first_friend = null;
-        
+
         beforeEach ->
           first_friend = selector.friends.models[0]
           selected.collection.add first_friend
