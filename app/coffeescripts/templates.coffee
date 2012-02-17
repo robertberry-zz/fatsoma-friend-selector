@@ -12,7 +12,7 @@ define
                           '''
   selected_users_item: '''
                        <div class="selected_user">{{name}}
-                         <span class="remove_button">Remove</span>
+                         <button class="remove_button">Remove</button>
                        </div>
                        '''
   selected_hidden_input: '''

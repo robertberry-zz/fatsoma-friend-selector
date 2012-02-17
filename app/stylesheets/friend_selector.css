@@ -49,10 +49,9 @@
     padding: 10px;
 }
 
-#selector div.selected_user span {
+#selector div.selected_user button {
     position: absolute;
     right: 10px;
-    cursor: pointer;
 }
 
 #selector .highlight {

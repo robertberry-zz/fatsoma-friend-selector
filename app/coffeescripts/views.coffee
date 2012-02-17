@@ -29,11 +29,13 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         collection: new models.Users
         user_pool: @remaining_friends
       @autocomplete.on "select", _.bind(@select_user, @)
-      @autocomplete.on "focus_input", =>
+      focus_search = =>
         input = @search.$el
         input.get(0).focus()
         # move cursor to end
         input.setCursorPosition(input.val().length)
+      @selected.on "focus_search", focus_search
+      @autocomplete.on "focus_input", focus_search
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
       @search.on "focus_autocomplete", =>
         # might not be any autocomplete items to focus
@@ -294,6 +296,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     remove: ->
       @trigger "remove_item", @model
 
+    focus_remove: ->
+      @$('.remove_button').get(0).focus()
+
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem
 
@@ -304,7 +309,15 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         _(items).invoke "on", "remove_item", remove
 
     remove_item: (model) ->
+      # we want to focus the next remove button for if the user is keyboard
+      # navigating these. otherwise focus the search input
+      next_index = @collection.indexOf model
       @collection.remove model
+      if next_index >= @collection.models.length
+        @trigger "focus_search"
+      else
+        @items[next_index].focus_remove()
+
 
   class exports.SelectedHiddenInput extends extensions.MustacheView
     template: templates.selected_hidden_input
