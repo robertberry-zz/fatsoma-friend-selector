@@ -228,11 +228,13 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       @$el.hide()
 
     show: ->
+      return if @collection.models.length == 0
       @$el.show()
 
     render: ->
       super
       @float()
+      @hide() if @collection.models.length == 0
 
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item

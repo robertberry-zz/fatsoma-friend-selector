@@ -294,12 +294,14 @@
       };
 
       UserAutocomplete.prototype.show = function() {
+        if (this.collection.models.length === 0) return;
         return this.$el.show();
       };
 
       UserAutocomplete.prototype.render = function() {
         UserAutocomplete.__super__.render.apply(this, arguments);
-        return this.float();
+        this.float();
+        if (this.collection.models.length === 0) return this.hide();
       };
 
       return UserAutocomplete;
