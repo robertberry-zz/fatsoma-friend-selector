@@ -32,14 +32,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       focus_search = =>
         input = @search.$el
         input.get(0).focus()
-        # move cursor to end
-        move_cursor = ->
-          input.setCursorPosition(input.val().length)
-        move_cursor()
-        # hacky fix for firefox, which doesn't want to align the cursor
-        # properly without a delay. I think this might be to do with the up key
-        # press event.
-        setTimeout move_cursor, 1
       @selected.on "focus_search", focus_search
       @autocomplete.on "focus_input", focus_search
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
@@ -86,7 +78,15 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     # If the user presses the down key focus the autocomplete
     on_key_down: (event) ->
       if event.keyCode == utils.keyCodes.KEY_DOWN
-        @trigger "focus_autocomplete"
+        event.preventDefault()
+        focus = =>
+          @trigger "focus_autocomplete"
+        # Annoying, but required to stop the keydown's keypress being
+        # intercepted by the autocomplete dropdown (thus moving down to the
+        # second item in the list immediately). The problem is you can only
+        # move out of the search input by intercepting key_down, but you cannot
+        # cancel a key_press event from key_down.
+        setTimeout focus, 1
 
     # When input changes re-render autocomplete
     on_key_up: (event) ->
@@ -171,7 +171,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       class: "autocomplete"
 
     events:
-      "keydown": "on_key_down"
+      "keypress": "on_key_press"
 
     # should specify a 'user_pool' from which the users are taken to populate
     # the dropdown (maybe this behaviour should be moved to a controller?)
@@ -198,8 +198,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       n = @collection.indexOf model
       @focus_item(n) if n != -1
 
-    on_key_down: (event) ->
+    on_key_press: (event) ->
       if event.keyCode == utils.keyCodes.KEY_UP
+        event.preventDefault()
         @prev()
       else if event.keyCode == utils.keyCodes.KEY_DOWN
         @next()

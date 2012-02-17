@@ -35,14 +35,9 @@
         });
         this.autocomplete.on("select", _.bind(this.select_user, this));
         focus_search = function() {
-          var input, move_cursor;
+          var input;
           input = _this.search.$el;
-          input.get(0).focus();
-          move_cursor = function() {
-            return input.setCursorPosition(input.val().length);
-          };
-          move_cursor();
-          return setTimeout(move_cursor, 1);
+          return input.get(0).focus();
         };
         this.selected.on("focus_search", focus_search);
         this.autocomplete.on("focus_input", focus_search);
@@ -102,8 +97,14 @@
       SearchInput.prototype.last_search = null;
 
       SearchInput.prototype.on_key_down = function(event) {
+        var focus,
+          _this = this;
         if (event.keyCode === utils.keyCodes.KEY_DOWN) {
-          return this.trigger("focus_autocomplete");
+          event.preventDefault();
+          focus = function() {
+            return _this.trigger("focus_autocomplete");
+          };
+          return setTimeout(focus, 1);
         }
       };
 
@@ -220,7 +221,7 @@
       };
 
       UserAutocomplete.prototype.events = {
-        "keydown": "on_key_down"
+        "keypress": "on_key_press"
       };
 
       UserAutocomplete.prototype.initialize = function() {
@@ -248,9 +249,10 @@
         if (n !== -1) return this.focus_item(n);
       };
 
-      UserAutocomplete.prototype.on_key_down = function(event) {
+      UserAutocomplete.prototype.on_key_press = function(event) {
         var _ref;
         if (event.keyCode === utils.keyCodes.KEY_UP) {
+          event.preventDefault();
           return this.prev();
         } else if (event.keyCode === utils.keyCodes.KEY_DOWN) {
           return this.next();
