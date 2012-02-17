@@ -381,6 +381,10 @@
 
       SelectedUsersItem.prototype.template = templates.selected_users_item;
 
+      SelectedUsersItem.prototype.attributes = {
+        "class": "selected_user"
+      };
+
       SelectedUsersItem.prototype.events = {
         "click .remove_button": "remove"
       };
@@ -405,6 +409,10 @@
       }
 
       SelectedUsers.prototype.item_view = exports.SelectedUsersItem;
+
+      SelectedUsers.prototype.attributes = {
+        "class": "clearfix"
+      };
 
       SelectedUsers.prototype.initialize = function() {
         var remove;

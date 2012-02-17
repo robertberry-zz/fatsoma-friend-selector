@@ -312,6 +312,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
   class exports.SelectedUsersItem extends extensions.MustacheView
     template: templates.selected_users_item
 
+    attributes:
+      class: "selected_user"
+
     events:
       "click .remove_button": "remove"
 
@@ -323,6 +326,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
 
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem
+
+    attributes:
+      class: "clearfix"
 
     initialize: ->
       super
