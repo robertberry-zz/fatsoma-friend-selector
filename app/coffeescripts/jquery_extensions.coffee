@@ -7,7 +7,7 @@ require ["jquery"], ->
   $.fn.setCursorPosition = (pos) ->
     elem = $(@).get 0
     if elem.setSelectionRange
-      elem.setSelectionRange pos, pos
+      elem.setSelectionRange(pos, pos)
     else if elem.createTextRange
       range = elem.createTextRange()
       range.collapse true

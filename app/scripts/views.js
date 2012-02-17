@@ -35,10 +35,14 @@
         });
         this.autocomplete.on("select", _.bind(this.select_user, this));
         focus_search = function() {
-          var input;
+          var input, move_cursor;
           input = _this.search.$el;
           input.get(0).focus();
-          return input.setCursorPosition(input.val().length);
+          move_cursor = function() {
+            return input.setCursorPosition(input.val().length);
+          };
+          move_cursor();
+          return setTimeout(move_cursor, 1);
         };
         this.selected.on("focus_search", focus_search);
         this.autocomplete.on("focus_input", focus_search);

@@ -33,7 +33,13 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         input = @search.$el
         input.get(0).focus()
         # move cursor to end
-        input.setCursorPosition(input.val().length)
+        move_cursor = ->
+          input.setCursorPosition(input.val().length)
+        move_cursor()
+        # hacky fix for firefox, which doesn't want to align the cursor
+        # properly without a delay. I think this might be to do with the up key
+        # press event.
+        setTimeout move_cursor, 1
       @selected.on "focus_search", focus_search
       @autocomplete.on "focus_input", focus_search
       @search.on "autocomplete", _.bind(@autocomplete.filter, @autocomplete)
