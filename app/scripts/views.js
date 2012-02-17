@@ -397,12 +397,12 @@
 
       SelectedUsers.prototype.remove_item = function(model) {
         var next_index;
-        next_index = this.collection.indexOf(model);
+        next_index = this.collection.indexOf(model) - 1;
         this.collection.remove(model);
-        if (next_index >= this.collection.models.length) {
-          return this.trigger("focus_search");
-        } else {
+        if ((0 <= next_index && next_index < this.collection.models.length)) {
           return this.items[next_index].focus_remove();
+        } else {
+          return this.trigger("focus_search");
         }
       };
 

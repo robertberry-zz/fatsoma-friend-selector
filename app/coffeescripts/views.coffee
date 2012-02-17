@@ -311,13 +311,12 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     remove_item: (model) ->
       # we want to focus the next remove button for if the user is keyboard
       # navigating these. otherwise focus the search input
-      next_index = @collection.indexOf model
+      next_index = @collection.indexOf(model) - 1
       @collection.remove model
-      if next_index >= @collection.models.length
-        @trigger "focus_search"
-      else
+      if 0 <= next_index < @collection.models.length
         @items[next_index].focus_remove()
-
+      else
+        @trigger "focus_search"
 
   class exports.SelectedHiddenInput extends extensions.MustacheView
     template: templates.selected_hidden_input
