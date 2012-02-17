@@ -176,11 +176,21 @@
               }
               return _results;
             });
-            return it("should match one user exactly when the full name is given", function() {
+            it("should match one user exactly when the full name is given", function() {
               selector.search.set_query(selector.friends.models[0].attributes.name);
               view = selector.autocomplete;
               expect(view.collection.length).toBe(1);
               return expect(view.collection.models[0].attributes).toEqual(fixtures.friends[0]);
+            });
+            return it("should highlight the matched terms in the names", function() {
+              var item, _i, _len, _ref, _results;
+              _ref = view.items;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
+                _results.push(expect(item.$('.highlight').val()).toEqual(search_term));
+              }
+              return _results;
             });
           });
           describe("when an item is clicked", function() {

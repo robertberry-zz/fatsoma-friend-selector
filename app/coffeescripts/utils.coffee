@@ -11,6 +11,14 @@ define ["jquery", "underscore", "backbone"], ->
   exports.startsWith = (haystack, needle) ->
     haystack.indexOf(needle) == 0
 
+  # Returns all the methods of an object as a new object (all bound).
+  exports.methods = (object) ->
+    method_names = _.functions(object)
+    methods = {}
+    for method_name in method_names
+      methods[method_name] = _.bind(object[method_name], object)
+    methods
+
   # Returns the complement of a function (its opposite)
   exports.complement = (f) ->
     -> not f.apply(f, arguments)

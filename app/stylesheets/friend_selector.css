@@ -36,7 +36,7 @@
 
 #selector div.selected {
     font: 12px Arial;
-    border: 2px solid #ccc;
+    border: 1px solid #ccc;
     margin-top: 10px;
     margin-bottom: 10px;
     min-height: 100px

@@ -330,6 +330,15 @@
         return this.trigger("remove_item", this.model);
       };
 
+      SelectedUsersItem.prototype.highlight = function(term) {
+        this.term = term;
+        return this.render();
+      };
+
+      SelectedUsersItem.prototype.render = function() {
+        return SelectedUsersItem.__super__.render.apply(this, arguments);
+      };
+
       return SelectedUsersItem;
 
     })(extensions.MustacheView);

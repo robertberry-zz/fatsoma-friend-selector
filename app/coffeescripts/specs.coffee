@@ -180,6 +180,10 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
             expect(view.collection.models[0].attributes).toEqual \
               fixtures.friends[0]
 
+          it "should highlight the matched terms in the names", ->
+            for item in view.items
+              expect(item.$('.highlight').val()).toEqual search_term
+
         describe "when an item is clicked", ->
           it "should fire the select event with the proper model", ->
             callback = jasmine.createSpy()

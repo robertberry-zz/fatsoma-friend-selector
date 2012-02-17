@@ -2,9 +2,17 @@
   var __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  define(["jquery", "underscore", "backbone", "mustache/mustache"], function() {
-    var exports;
+  define(["utils", "jquery", "underscore", "backbone", "mustache/mustache"], function(utils) {
+    var create_context, exports;
     exports = {};
+    create_context = function(model) {
+      var context, methods;
+      context = {};
+      methods = utils.methods(model);
+      _.extend(context, methods);
+      _.extend(context, model.attributes);
+      return context;
+    };
     exports.MustacheView = (function(_super) {
 
       __extends(MustacheView, _super);
@@ -16,7 +24,7 @@
       MustacheView.prototype.render = function() {
         var context, model;
         if (this.model) {
-          context = this.model.attributes;
+          context = new create_context(this.model);
         } else if (this.collection) {
           context = {
             collection: (function() {
@@ -25,7 +33,7 @@
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 model = _ref[_i];
-                _results.push(model.attributes);
+                _results.push(create_context(model));
               }
               return _results;
             }).call(this)

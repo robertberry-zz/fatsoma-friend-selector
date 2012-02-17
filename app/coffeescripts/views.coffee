@@ -249,6 +249,14 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     remove: ->
       @trigger "remove_item", @model
 
+    highlight: (term) ->
+      @term = term
+      @render()
+
+    render: ->
+      super
+
+
   class exports.SelectedUsers extends extensions.CollectionView
     item_view: exports.SelectedUsersItem
 

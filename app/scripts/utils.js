@@ -8,6 +8,16 @@
     exports.startsWith = function(haystack, needle) {
       return haystack.indexOf(needle) === 0;
     };
+    exports.methods = function(object) {
+      var method_name, method_names, methods, _i, _len;
+      method_names = _.functions(object);
+      methods = {};
+      for (_i = 0, _len = method_names.length; _i < _len; _i++) {
+        method_name = method_names[_i];
+        methods[method_name] = _.bind(object[method_name], object);
+      }
+      return methods;
+    };
     exports.complement = function(f) {
       return function() {
         return !f.apply(f, arguments);

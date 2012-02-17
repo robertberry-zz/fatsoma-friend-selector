@@ -3,8 +3,20 @@
 # Author: Robert Berry
 # Date: 14th February 2012 (Forever alone :()
 
-define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
+define ["utils", "jquery", "underscore", "backbone", "mustache/mustache"], \
+    (utils) ->
   exports = {}
+
+  # Creates a template context from a model, giving you both access to the
+  # attributes directly (rather than through the .attributes property, as
+  # you will mostly be just accessing attributes) and also method
+  # names. Property names override method names.
+  create_context = (model) ->
+    context = {}
+    methods = utils.methods(model)
+    _.extend(context, methods)
+    _.extend(context, model.attributes)
+    context
 
   # Extension of Backbone.View to use Mustache as templating engine. Render
   # will work for either models (in which case the attributes are directly
@@ -14,9 +26,9 @@ define ["jquery", "underscore", "backbone", "mustache/mustache"], ->
   class exports.MustacheView extends Backbone.View
     render: ->
       if @model
-        context = @model.attributes
+        context = new create_context(@model)
       else if @collection
-        context = {collection: model.attributes for model in @collection.models}
+        context = {collection: create_context(model) for model in @collection.models}
       else
         context = {}
       @$el.html Mustache.render(@template, context)
