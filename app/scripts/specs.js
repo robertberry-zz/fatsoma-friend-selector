@@ -49,14 +49,20 @@
           return expect(callback).toHaveBeenCalled();
         });
         return it("should fire focus autocomplete event when pressing down arrow", function() {
-          var callback, event_stub;
+          var callback;
           callback = jasmine.createSpy();
-          search_box.on("focus_autocomplete", callback);
-          event_stub = {
-            keyCode: utils.keyCodes.KEY_DOWN
-          };
-          search_box.on_key_down(event_stub);
-          return expect(callback).toHaveBeenCalled();
+          runs(function() {
+            var event_stub;
+            search_box.on("focus_autocomplete", callback);
+            event_stub = {
+              keyCode: utils.keyCodes.KEY_DOWN
+            };
+            return search_box.on_key_down(event_stub);
+          });
+          waits(10);
+          return runs(function() {
+            return expect(callback).toHaveBeenCalled();
+          });
         });
       });
       describe("autocomplete dropdown", function() {
@@ -95,7 +101,7 @@
               event_stub = {
                 keyCode: utils.keyCodes.KEY_DOWN
               };
-              view.on_key_down(event_stub);
+              view.on_key_press(event_stub);
               return expect(view.focus_item).toHaveBeenCalledWith(1);
             });
             it("should focus the previous item in the list if the user presses              the up key", function() {
@@ -106,7 +112,7 @@
               event_stub = {
                 keyCode: utils.keyCodes.KEY_UP
               };
-              view.on_key_down(event_stub);
+              view.on_key_press(event_stub);
               return expect(view.focus_item).toHaveBeenCalledWith(0);
             });
             describe("when the first item in the list is selected", function() {
@@ -120,7 +126,7 @@
                 event_stub = {
                   keyCode: utils.keyCodes.KEY_UP
                 };
-                view.on_key_down(event_stub);
+                view.on_key_press(event_stub);
                 expect(view.focused).toBeFalsy();
                 return expect(callback).toHaveBeenCalled();
               });
@@ -134,7 +140,7 @@
                 event_stub = {
                   keyCode: utils.keyCodes.KEY_DOWN
                 };
-                view.on_key_down(event_stub);
+                view.on_key_press(event_stub);
                 return expect(view.focused_item).toBe(0);
               });
             });

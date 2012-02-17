@@ -78,7 +78,6 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     # If the user presses the down key focus the autocomplete
     on_key_down: (event) ->
       if event.keyCode == utils.keyCodes.KEY_DOWN
-        event.preventDefault()
         focus = =>
           @trigger "focus_autocomplete"
         # Annoying, but required to stop the keydown's keypress being
@@ -199,7 +198,17 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       n = @collection.indexOf model
       @focus_item(n) if n != -1
 
+    # Focuses the form input
+    focus_input: ->
+      @trigger "focus_input"
+      @unfocus()
+
     on_key_down: (event) ->
+      # allow you to press backspace and return to editing
+      input_keys = [utils.keyCodes.KEY_BACKSPACE]
+      if event.keyCode in input_keys
+        @focus_input()
+
       # chrome for some reason doesn't seem to register keypress events, but
       # we don't want to move twice as far in other browsers
       if $.browser.webkit
@@ -207,7 +216,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
 
     on_key_press: (event) ->
       if event.keyCode == utils.keyCodes.KEY_UP
-        event.preventDefault()
+        event.preventDefault?()
         @prev()
       else if event.keyCode == utils.keyCodes.KEY_DOWN
         @next()
@@ -223,8 +232,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
     # Focuses next item in list
     prev: ->
       if @focused_item == 0
-        @trigger "focus_input"
-        @unfocus()
+        @focus_input()
       else
         @focus_item(@focused_item - 1)
 

@@ -31,7 +31,8 @@
 }
 
 #selector li:focus {
-    background-color: #eee
+    background-color: #eee;
+    outline: none
 }
 
 #selector div.selected {
@@ -47,11 +48,13 @@
     border: 1px solid #eee;
     width: 250px;
     padding: 10px;
+    float: left;
 }
 
 #selector div.selected_user button {
     position: absolute;
-    right: 10px;
+    top: 5px;
+    right: 6px
 }
 
 #selector .highlight {

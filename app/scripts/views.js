@@ -1,6 +1,7 @@
 (function() {
   var __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   define(["models", "templates", "exceptions", "backbone_extensions", "utils", "jquery_extensions"], function(models, templates, exceptions, extensions, utils) {
     var exports;
@@ -100,7 +101,6 @@
         var focus,
           _this = this;
         if (event.keyCode === utils.keyCodes.KEY_DOWN) {
-          event.preventDefault();
           focus = function() {
             return _this.trigger("focus_autocomplete");
           };
@@ -250,14 +250,24 @@
         if (n !== -1) return this.focus_item(n);
       };
 
+      UserAutocomplete.prototype.focus_input = function() {
+        this.trigger("focus_input");
+        return this.unfocus();
+      };
+
       UserAutocomplete.prototype.on_key_down = function(event) {
+        var input_keys, _ref;
+        input_keys = [utils.keyCodes.KEY_BACKSPACE];
+        if (_ref = event.keyCode, __indexOf.call(input_keys, _ref) >= 0) {
+          this.focus_input();
+        }
         if ($.browser.webkit) return this.on_key_press(event);
       };
 
       UserAutocomplete.prototype.on_key_press = function(event) {
         var _ref;
         if (event.keyCode === utils.keyCodes.KEY_UP) {
-          event.preventDefault();
+          if (typeof event.preventDefault === "function") event.preventDefault();
           return this.prev();
         } else if (event.keyCode === utils.keyCodes.KEY_DOWN) {
           return this.next();
@@ -273,8 +283,7 @@
 
       UserAutocomplete.prototype.prev = function() {
         if (this.focused_item === 0) {
-          this.trigger("focus_input");
-          return this.unfocus();
+          return this.focus_input();
         } else {
           return this.focus_item(this.focused_item - 1);
         }

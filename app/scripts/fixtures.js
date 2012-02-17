@@ -22,10 +22,26 @@
         }, {
           id: 5,
           name: "Robert Berry",
-          type: "hermit"
+          type: "fatsoma"
         }, {
           id: 6,
           name: "Jon Roberts",
+          type: "fatsoma"
+        }, {
+          id: 7,
+          name: "Amy Rawcliffe",
+          type: "facebook"
+        }, {
+          id: 8,
+          name: "Andrew Chambers",
+          type: "fatsoma"
+        }, {
+          id: 9,
+          name: "Nathan Pardoe",
+          type: "fatsoma"
+        }, {
+          id: 10,
+          name: "Rudolf Hesse",
           type: "fatsoma"
         }
       ],

@@ -59,11 +59,14 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
 
       it "should fire focus autocomplete event when pressing down arrow", ->
         callback = jasmine.createSpy()
-        search_box.on "focus_autocomplete", callback
-        event_stub =
-          keyCode: utils.keyCodes.KEY_DOWN
-        search_box.on_key_down event_stub
-        expect(callback).toHaveBeenCalled()
+        runs ->
+          search_box.on "focus_autocomplete", callback
+          event_stub =
+            keyCode: utils.keyCodes.KEY_DOWN
+          search_box.on_key_down event_stub
+        waits 10
+        runs ->
+          expect(callback).toHaveBeenCalled()
 
     describe "autocomplete dropdown", ->
       autocomplete = null
@@ -105,7 +108,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
             # see the search_box key down test for why stubbing here
             event_stub =
               keyCode: utils.keyCodes.KEY_DOWN
-            view.on_key_down(event_stub)
+            view.on_key_press(event_stub)
             expect(view.focus_item).toHaveBeenCalledWith(1)
 
           it "should focus the previous item in the list if the user presses
@@ -117,7 +120,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
             # see the search_box key down test for why stubbing here
             event_stub =
               keyCode: utils.keyCodes.KEY_UP
-            view.on_key_down(event_stub)
+            view.on_key_press(event_stub)
             expect(view.focus_item).toHaveBeenCalledWith(0)
 
           describe "when the first item in the list is selected", ->
@@ -130,7 +133,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
               view.on "focus_input", callback
               event_stub =
                 keyCode: utils.keyCodes.KEY_UP
-              view.on_key_down(event_stub)
+              view.on_key_press(event_stub)
               expect(view.focused).toBeFalsy()
               expect(callback).toHaveBeenCalled()
 
@@ -142,7 +145,7 @@ require ["views", "utils", "models", "exceptions", "fixtures"], \
                 down arrow key", ->
               event_stub =
                 keyCode: utils.keyCodes.KEY_DOWN
-              view.on_key_down(event_stub)
+              view.on_key_press(event_stub)
               expect(view.focused_item).toBe 0
 
         describe "the view's collection", ->
