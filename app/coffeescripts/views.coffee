@@ -42,6 +42,9 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       @search_focus_group = new utils.FocusGroup [@search.el, @autocomplete.el]
       @search_focus_group.on "focus", _.bind(@autocomplete.show, @autocomplete)
       @search_focus_group.on "blur", _.bind(@autocomplete.hide, @autocomplete)
+      @selected_hidden = new exports.SelectedHiddenInputArray
+        collection: selected_friends
+      @selected_hidden.render()
 
     # Selects the given user, resets the search query
     select_user: (user) ->
@@ -53,6 +56,7 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       @$(".selected").html @selected.el
       @$(".search_box").html @search.el
       @$(".autocomplete_box").html @autocomplete.el
+      @$(".selected_hidden").html @selected_hidden.el
       # only render here so it's inserted before floated
       @autocomplete.render()
 
@@ -256,5 +260,15 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
 
     remove_item: (model) ->
       @collection.remove model
+
+  class exports.SelectedHiddenInput extends extensions.MustacheView
+    template: templates.selected_hidden_input
+
+  # Given a collection maintains a list of hidden inputs in an invisible div.
+  class exports.SelectedHiddenInputArray extends extensions.CollectionView
+    item_view: exports.SelectedHiddenInput
+
+    attributes:
+      style: "display:none"
 
   exports

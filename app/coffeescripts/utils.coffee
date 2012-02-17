@@ -49,10 +49,10 @@ define ["jquery", "underscore", "backbone"], ->
       no
 
   # Allow you to use Backbone.Events as a native CoffeeScript class
-  class Events
-  _.extend(Events::, Backbone.Events)
+  class exports.Events
+  _.extend(exports.Events::, Backbone.Events)
 
-  class exports.ElementGroup extends Events
+  class exports.ElementGroup extends exports.Events
     constructor: (items) ->
       @items = _(items).map (item) -> $(item)
 

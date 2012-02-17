@@ -4,6 +4,7 @@ define
                      <div class="search_box"></div>
                      <div class="autocomplete_box"></div>
                      <div class="selected"></div>
+                     <div class="selected_hidden"></div>
                      <input type="submit" value="Create Party" />
                    '''
   user_autocomplete_item: '''
@@ -14,3 +15,6 @@ define
                          <span class="remove-button">Remove</span>
                        </div>
                        '''
+  selected_hidden_input: '''
+                         <input type="hidden" name="selected[]" value="{{id}}" />
+                         '''

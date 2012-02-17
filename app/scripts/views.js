@@ -48,7 +48,11 @@
         });
         this.search_focus_group = new utils.FocusGroup([this.search.el, this.autocomplete.el]);
         this.search_focus_group.on("focus", _.bind(this.autocomplete.show, this.autocomplete));
-        return this.search_focus_group.on("blur", _.bind(this.autocomplete.hide, this.autocomplete));
+        this.search_focus_group.on("blur", _.bind(this.autocomplete.hide, this.autocomplete));
+        this.selected_hidden = new exports.SelectedHiddenInputArray({
+          collection: selected_friends
+        });
+        return this.selected_hidden.render();
       };
 
       FriendSelector.prototype.select_user = function(user) {
@@ -61,6 +65,7 @@
         this.$(".selected").html(this.selected.el);
         this.$(".search_box").html(this.search.el);
         this.$(".autocomplete_box").html(this.autocomplete.el);
+        this.$(".selected_hidden").html(this.selected_hidden.el);
         return this.autocomplete.render();
       };
 
@@ -352,6 +357,36 @@
       };
 
       return SelectedUsers;
+
+    })(extensions.CollectionView);
+    exports.SelectedHiddenInput = (function(_super) {
+
+      __extends(SelectedHiddenInput, _super);
+
+      function SelectedHiddenInput() {
+        SelectedHiddenInput.__super__.constructor.apply(this, arguments);
+      }
+
+      SelectedHiddenInput.prototype.template = templates.selected_hidden_input;
+
+      return SelectedHiddenInput;
+
+    })(extensions.MustacheView);
+    exports.SelectedHiddenInputArray = (function(_super) {
+
+      __extends(SelectedHiddenInputArray, _super);
+
+      function SelectedHiddenInputArray() {
+        SelectedHiddenInputArray.__super__.constructor.apply(this, arguments);
+      }
+
+      SelectedHiddenInputArray.prototype.item_view = exports.SelectedHiddenInput;
+
+      SelectedHiddenInputArray.prototype.attributes = {
+        style: "display:none"
+      };
+
+      return SelectedHiddenInputArray;
 
     })(extensions.CollectionView);
     return exports;

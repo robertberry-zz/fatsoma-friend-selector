@@ -3,7 +3,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   define(["jquery", "underscore", "backbone"], function() {
-    var Events, exports;
+    var exports;
     exports = {};
     exports.startsWith = function(haystack, needle) {
       return haystack.indexOf(needle) === 0;
@@ -45,14 +45,14 @@
         return false;
       }
     };
-    Events = (function() {
+    exports.Events = (function() {
 
       function Events() {}
 
       return Events;
 
     })();
-    _.extend(Events.prototype, Backbone.Events);
+    _.extend(exports.Events.prototype, Backbone.Events);
     exports.ElementGroup = (function(_super) {
 
       __extends(ElementGroup, _super);
@@ -71,7 +71,7 @@
 
       return ElementGroup;
 
-    })(Events);
+    })(exports.Events);
     exports.FocusGroup = (function(_super) {
 
       __extends(FocusGroup, _super);
