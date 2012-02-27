@@ -27,7 +27,20 @@
 }
 
 #selector ul.autocomplete li {
-    padding: 10px
+    padding: 10px;
+    line-height: 50px;
+}
+
+#selector ul.autocomplete li img.avatar {
+    float: left;
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+#selector ul.autocomplete li img.type {
+    /* ignoring this for now */
+    display: none;
 }
 
 #selector li:focus {

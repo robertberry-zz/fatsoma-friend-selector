@@ -13,6 +13,12 @@
         User.__super__.constructor.apply(this, arguments);
       }
 
+      User.prototype.type_icon = function() {
+        var type;
+        type = this.get('type');
+        return "./images/icons/" + type + ".png";
+      };
+
       return User;
 
     })(Backbone.Model);
