@@ -26,7 +26,7 @@ new there are relatively few examples of usage online, especially for Backbone,
 which is a pretty lightweight framework and leaves a lot of design choices to
 the individual.
 
-# Building
+## Building
 
 The project should just work straight from the app folder. You don't need the
 /app/coffeescripts/ folder as all the JS has been compiled from that already -
@@ -35,3 +35,36 @@ but that's for your perusal.
 To run the tests open /app/SpecRunner.html in a JavaScript-enabled browser. To
 see the selector in action open /app/index.html.
 
+## Development
+
+For development we made use of Guard and Guard CoffeeScript. Rather than set
+these up yourself, you can use
+[RVM](https://rvm.beginrescueend.com/) and
+[Bundler](http://gembundler.com/). Navigate to the project directory once RVM
+is installed and follow the on-screen instructions to install the correct
+version of Ruby. Then type
+
+    $ gem install bundler
+    
+inside the project to install Bundler into that version of Ruby. Then run
+
+    $ bundle install
+    
+to install all of the dependencies. Then from the root of the project run
+
+    $ bundle exec guard
+    
+and Bundler will automatically rebuild any JavaScript when you edit the
+CoffeeScript files.
+
+## Miscellaneous
+
+We programmed a lot of this using remote pair programming over a terminal
+multiplexer (we would use Emacs in the terminal). A cool trick for quickly
+setting up the project for viewing would be to run
+
+    $ python -m SimpleHTTPServer
+
+in a sub-terminal from the app/ folder. This makes the project acessible on
+port 8000. So whoever was logging in remotely could just type
+http://my-ip-here:8000 and see the selector in action.
