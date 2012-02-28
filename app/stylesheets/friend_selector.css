@@ -39,7 +39,7 @@
     margin-right: 10px;
 }
 
-#selector ul.autocomplete li img.type {
+#selector img.type {
     /* ignoring this for now */
     display: none;
 }

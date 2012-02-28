@@ -15,7 +15,7 @@ define
   selected_users_item: '''
                        <img src="{{picture}}" alt="{{name}}" class="avatar" />
                        {{name}}
-                       <img src="{{type_icon}}" alt="{{type}}" />
+                       <img src="{{type_icon}}" alt="{{type}}" class="type" />
                          <button class="remove_button">Remove</button>
                        '''
   selected_hidden_input: '''
