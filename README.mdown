@@ -27,7 +27,8 @@ which is a pretty lightweight framework and leaves a lot of design choices to
 the individual.
 
 You can see it in action
-[here](http://li310-124.members.linode.com/friend-selector/).
+[here](http://li310-124.members.linode.com/friend-selector/) (try typing 'r'
+into the search input).
 
 ## Building
 
