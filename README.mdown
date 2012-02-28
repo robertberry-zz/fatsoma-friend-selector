@@ -26,6 +26,9 @@ new there are relatively few examples of usage online, especially for Backbone,
 which is a pretty lightweight framework and leaves a lot of design choices to
 the individual.
 
+You can see it in action
+[here](http://li310-124.members.linode.com/friend-selector/).
+
 ## Building
 
 The project should just work straight from the app folder. You don't need the
