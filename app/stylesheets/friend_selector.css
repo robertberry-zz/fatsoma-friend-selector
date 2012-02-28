@@ -21,6 +21,7 @@
     font: 14px Arial;
     color: #444444;
     margin: 0;
+    overflow: auto;
     padding: 0;
     width: 400px;
     z-index: 100

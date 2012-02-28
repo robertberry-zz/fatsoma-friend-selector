@@ -173,6 +173,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       "keydown": "on_key_down"
       "keypress": "on_key_press"
 
+    # how many pixels gap to give between bottom of dropdown and the bottom of
+    # the viewport
+    WINDOW_MARGIN: 10
+
     # should specify a 'user_pool' from which the users are taken to populate
     # the dropdown (maybe this behaviour should be moved to a controller?)
     initialize: ->
@@ -185,6 +189,8 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         _(items).invoke "on", "focus", focus_model
         if @terms
           _(items).invoke "highlight", @terms
+      $(window).resize =>
+        @set_max_height()
 
     focused: no
 
@@ -304,8 +310,19 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
       return if @collection.models.length == 0
       @$el.show()
 
+    # Makes sure the max height of the dropdown does not extend past the bottom
+    # of the window. Combined with overflow-y: auto, this gives the dropdown
+    # scrollbars should this happen.
+    set_max_height: ->
+      {top} = @$el.offset()
+      # todo: sometimes this is rendering with top: 0. Seems to be a bug and
+      # breaks set_max_height when it happens.
+      if top
+        @$el.css "maxHeight", ($(window).height() - top) - @WINDOW_MARGIN
+
     render: ->
       super
+      @set_max_height()
       @float()
       @hide() if @collection.models.length == 0
 

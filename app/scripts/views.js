@@ -225,6 +225,8 @@
         "keypress": "on_key_press"
       };
 
+      UserAutocomplete.prototype.WINDOW_MARGIN = 10;
+
       UserAutocomplete.prototype.initialize = function() {
         var focus_model, select,
           _this = this;
@@ -232,10 +234,13 @@
         this.user_pool = this.options["user_pool"];
         select = _.bind(this.select, this);
         focus_model = _.bind(this.focus_model, this);
-        return this.on("refresh", function(items) {
+        this.on("refresh", function(items) {
           _(items).invoke("on", "select", select);
           _(items).invoke("on", "focus", focus_model);
           if (_this.terms) return _(items).invoke("highlight", _this.terms);
+        });
+        return $(window).resize(function() {
+          return _this.set_max_height();
         });
       };
 
@@ -362,8 +367,17 @@
         return this.$el.show();
       };
 
+      UserAutocomplete.prototype.set_max_height = function() {
+        var top;
+        top = this.$el.offset().top;
+        if (top) {
+          return this.$el.css("maxHeight", ($(window).height() - top) - this.WINDOW_MARGIN);
+        }
+      };
+
       UserAutocomplete.prototype.render = function() {
         UserAutocomplete.__super__.render.apply(this, arguments);
+        this.set_max_height();
         this.float();
         if (this.collection.models.length === 0) return this.hide();
       };
