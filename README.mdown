@@ -1,4 +1,37 @@
-# Fatsoma Socials Friend Selector
+# Fatsoma Friend Selector
 
-JavaScript friend selector component for use on the Fatsoma Socials main party
-page. 
+A JavaScript UI component for selecting friends on the upcoming Fatsoma socials
+platform. The user is presented with a search box in which they can type the
+names of their friends (in the example try typing 'Ro' to start), and an
+autocomplete dropdown appears, generated using HTML rather than native
+widgets. This allows a finer granularity of styling.
+
+The UI component is built on a range of relatively new technologies. We used
+[CoffeeScript](http://coffeescript.org/), for its brevity and in-built support
+of classic OOP-style programming. The JavaScript is compiled from the
+CoffeeScript using [Guard](https://github.com/guard/guard).  We used
+[RequireJS](http://requirejs.org/) for managing dependencies between
+modules. We used [Backbone](http://documentcloud.github.com/backbone/) for its
+MVC framework and [Mustache](http://mustache.github.com/) for its templating
+system. The project was built in a week through BDD-style programming using
+[Jasmine](http://pivotal.github.com/jasmine/) for writing specs. Oh, and
+[jQuery](http://jquery.com/) and
+[Underscore](http://documentcloud.github.com/underscore/) for the obvious.
+
+The combination of these technologies was really a massive improvement on our
+previous JavaScript development and felt a lot more like developing in a
+modern, well-designed scripting language, like Ruby or Python. We're
+open-sourcing the code to help others working with these technologies, as being
+new there are relatively few examples of usage online, especially for Backbone,
+which is a pretty lightweight framework and leaves a lot of design choices to
+the individual.
+
+# Building
+
+The project should just work straight from the app folder. You don't need the
+/app/coffeescripts/ folder as all the JS has been compiled from that already -
+but that's for your perusal.
+
+To run the tests open /app/SpecRunner.html in a JavaScript-enabled browser. To
+see the selector in action open /app/index.html.
+
