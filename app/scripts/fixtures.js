@@ -53,6 +53,56 @@
           name: "Rudolf Hesse",
           type: "fatsoma",
           picture: "images/test/dean.jpg"
+        }, {
+          id: 11,
+          name: "Chris Pearson",
+          type: "facebook",
+          picture: "images/test/ollie.jpg"
+        }, {
+          id: 12,
+          name: "Paul Stacey",
+          type: "fatsoma",
+          picture: "images/test/paul.jpg"
+        }, {
+          id: 13,
+          name: "Ron Weasley",
+          type: "facebook",
+          picture: "images/test/ray.jpg"
+        }, {
+          id: 14,
+          name: "Simon Mellor",
+          type: "fatsoma",
+          picture: "images/test/ollie.jpg"
+        }, {
+          id: 15,
+          name: "Robert Berry",
+          type: "fatsoma",
+          picture: "images/test/ray.jpg"
+        }, {
+          id: 16,
+          name: "Jon Roberts",
+          type: "fatsoma",
+          picture: "images/test/ollie.jpg"
+        }, {
+          id: 17,
+          name: "Amy Rawcliffe",
+          type: "facebook",
+          picture: "images/test/mark.jpg"
+        }, {
+          id: 18,
+          name: "Andrew Chambers",
+          type: "fatsoma",
+          picture: "images/test/paul.jpg"
+        }, {
+          id: 19,
+          name: "Nathan Pardoe",
+          type: "fatsoma",
+          picture: "images/test/ray.jpg"
+        }, {
+          id: 20,
+          name: "Rudolf Hesse",
+          type: "fatsoma",
+          picture: "images/test/dean.jpg"
         }
       ],
       test_models: [

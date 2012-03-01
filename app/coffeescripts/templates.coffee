@@ -5,7 +5,7 @@ define
                      <div class="autocomplete_box"></div>
                      <div class="selected"></div>
                      <div class="selected_hidden"></div>
-                     <input type="submit" value="Create Party" />
+                     <div class="clearfix"><input class="selected_create" type="submit" value="Create Party" /></div>
                    '''
   user_autocomplete_item: '''
                           <img src="{{picture}}" alt="{{name}}" class="avatar" />
@@ -14,9 +14,9 @@ define
                           '''
   selected_users_item: '''
                        <img src="{{picture}}" alt="{{name}}" class="avatar" />
-                       {{name}}
+                       <div class="selected_name">{{name}}</div>
                        <img src="{{type_icon}}" alt="{{type}}" class="type" />
-                         <button class="remove_button">Remove</button>
+                         <input type="image" class="remove_button" src="./images/icons/close.png" />
                        '''
   selected_hidden_input: '''
                          <input type="hidden" name="selected[]" value="{{id}}" />
