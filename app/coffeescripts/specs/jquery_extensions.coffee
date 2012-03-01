@@ -1,6 +1,6 @@
 # Specs for jQuery extensions
 
-require ["jquery_extensions"], ->
+require ["jquery", "jquery_extensions"], ($) ->
   describe "setCursorPosition", ->
     input = null
 

@@ -1,6 +1,6 @@
 # Specs for utils file
 
-require ["utils", "jquery", "underscore", "backbone"], (utils) ->
+require ["utils", "jquery", "underscore", "backbone"], (utils, $, _, Backbone) ->
   describe "contains", ->
     elem1 = null
     elem2 = null

@@ -1,6 +1,6 @@
 (function() {
 
-  require(["jquery_extensions"], function() {
+  require(["jquery", "jquery_extensions"], function($) {
     return describe("setCursorPosition", function() {
       var input;
       input = null;

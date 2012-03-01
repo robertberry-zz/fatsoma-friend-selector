@@ -1,6 +1,6 @@
 (function() {
 
-  require(["utils", "jquery", "underscore", "backbone"], function(utils) {
+  require(["utils", "jquery", "underscore", "backbone"], function(utils, $, _, Backbone) {
     describe("contains", function() {
       var elem1, elem2;
       elem1 = null;

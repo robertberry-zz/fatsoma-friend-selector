@@ -1,7 +1,7 @@
 # Specs relating to Backbone extensions
 
 require ["backbone_extensions", "fixtures", "jquery", "underscore", "backbone"], \
-    (extensions, fixtures) ->
+    (extensions, fixtures, $, _, Backbone) ->
   describe "CollectionView", ->
     CollectionViewStub = null
     CollectionViewItemStub = null
