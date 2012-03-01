@@ -1,6 +1,6 @@
 # Extension functions to jQuery
 
-require ["jquery"], ->
+require ["jquery"], ($) ->
   # Sets cursor position in a text box. Code adapted from:
   # http://stackoverflow.com/questions/499126/jquery-
   # set-cursor-position-in-text-area

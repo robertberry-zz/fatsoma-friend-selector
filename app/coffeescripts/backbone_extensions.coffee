@@ -4,7 +4,7 @@
 # Date: 14th February 2012 (Forever alone :()
 
 define ["utils", "jquery", "underscore", "backbone", "mustache/mustache"], \
-    (utils) ->
+    (utils, $, _, Backbone) ->
   exports = {}
 
   # Creates a template context from a model, giving you both access to the

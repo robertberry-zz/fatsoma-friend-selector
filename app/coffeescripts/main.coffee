@@ -4,10 +4,13 @@
 # Author: Robert Berry
 # Created: 10th February 2012
 
-define ["views", "fixtures", "models", "jquery"], (views, fixtures, models) ->
-  selector = new views.FriendSelector
-    el: $("#selector")
-    friends: new models.Users fixtures.friends
-  selector.render()
-
+# Bootstrap non-AMD-compliant modules (see
+# http://backbonetutorials.com/organizing-backbone-using-modules/)
+require ["order!lib/jquery", "order!lib/underscore", "order!lib/backbone"], ->
+  require ["jquery", "underscore", "backbone", "views", "fixtures", "models"], \
+      ($, _, Backbone, views, fixtures, models) ->
+    selector = new views.FriendSelector
+      el: $("#selector")
+      friends: new models.Users fixtures.friends
+    selector.render()
 

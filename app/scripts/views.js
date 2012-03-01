@@ -3,7 +3,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(["models", "templates", "exceptions", "backbone_extensions", "utils", "jquery_extensions"], function(models, templates, exceptions, extensions, utils) {
+  define(["models", "templates", "exceptions", "backbone_extensions", "utils", "backbone", "underscore", "jquery", "jquery_extensions"], function(models, templates, exceptions, extensions, utils, Backbone, _, $) {
     var exports;
     exports = {};
     exports.FriendSelector = (function(_super) {

@@ -3,7 +3,7 @@
 # Author: Robert Berry
 # Date: 10th February 2012
 
-define ["jquery", "underscore", "backbone"], ->
+define ["jquery", "underscore", "backbone"], ($, _, Backbone) ->
   exports = {}
 
   # Returns whether the given haystack sequence starts with the given needle

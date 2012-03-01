@@ -1,6 +1,6 @@
 (function() {
 
-  require(["jquery"], function() {
+  require(["jquery"], function($) {
     $.fn.setCursorPosition = function(pos) {
       var elem, range;
       elem = $(this).get(0);

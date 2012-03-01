@@ -4,7 +4,8 @@
 # Created: 9th Feb 2012
 
 define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
-    "jquery_extensions"], (models, templates, exceptions, extensions, utils) ->
+    "backbone", "underscore", "jquery", "jquery_extensions"], \
+    (models, templates, exceptions, extensions, utils, Backbone, _, $) ->
   exports = {}
 
   # Main view

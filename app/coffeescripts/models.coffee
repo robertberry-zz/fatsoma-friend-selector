@@ -1,4 +1,4 @@
-define ["jquery", "underscore", "backbone"], ->
+define ["jquery", "underscore", "backbone"], ($, _, Backbone) ->
   exports = {}
 
   class exports.User extends Backbone.Model
