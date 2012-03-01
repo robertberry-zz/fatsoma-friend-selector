@@ -1,14 +1,12 @@
 (function() {
+  var includes;
 
-  require(["order!lib/jquery", "order!lib/underscore", "order!lib/backbone"], function() {
-    return require(["jquery", "underscore", "backbone", "views", "fixtures", "models"], function($, _, Backbone, views, fixtures, models) {
-      var selector;
-      selector = new views.FriendSelector({
-        el: $("#selector"),
-        friends: new models.Users(fixtures.friends)
-      });
-      return selector.render();
-    });
+  includes = ["order!lib/jquery", "order!lib/underscore", "order!lib/backbone", "app"];
+
+  define(includes, function(_, _, _, app) {
+    return {
+      from_fixtures: app
+    };
   });
 
 }).call(this);

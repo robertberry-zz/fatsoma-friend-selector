@@ -276,14 +276,10 @@ define ["models", "templates", "exceptions", "backbone_extensions", "utils", \
         @items[n].focus()
         @focused_item = n
 
-    # css fix to make the list float below the text box (is done with absolute
-    # positioning; javascript needs to calculate the top and left valuesx)
+    # css fix to make the list float below the text box
     float: ->
       if not @floated
-        {top, left} = @$el.offset()
         @$el.css "position", "absolute"
-        @$el.css "top", top
-        @$el.css "left", left
         @floated = yes
 
     # filters the shown users from the user pool given the search terms
