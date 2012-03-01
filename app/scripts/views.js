@@ -325,12 +325,8 @@
       };
 
       UserAutocomplete.prototype.float = function() {
-        var left, top, _ref;
         if (!this.floated) {
-          _ref = this.$el.offset(), top = _ref.top, left = _ref.left;
           this.$el.css("position", "absolute");
-          this.$el.css("top", top);
-          this.$el.css("left", left);
           return this.floated = true;
         }
       };
