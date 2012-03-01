@@ -4,8 +4,20 @@
 
 <link rel="stylesheet" href="stylesheets/friend_selector.css"
       type="text/css" media="screen" />
-<script type="text/javascript" data-main="scripts/main"
-        src="scripts/require.js"></script>
+<script type="text/javascript" src="scripts/require.js"></script>
+
+<script type="text/javascript">
+  require.config({
+    baseUrl: "./scripts/"
+  });
+  require(["main", "fixtures"], function (main, fixtures) {
+    var from_fixtures, selector;
+
+    from_fixtures = main.from_fixtures;
+    selector = from_fixtures(fixtures.friends);
+  });
+</script>
+
 </head>
 <body>
 
