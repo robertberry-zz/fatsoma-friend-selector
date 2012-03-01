@@ -4,6 +4,7 @@
 }
 
 #selector input.search {
+    float: none; /* this is to resolve a conflict in the standard fatsoma stylesheets */
     border: 1px solid #ccc;
     color: #444444;
     font: 14px Arial;
