@@ -20,6 +20,6 @@ define ->
             {id: 17, name: "Amy Rawcliffe", type: "facebook", picture: "images/test/mark.jpg"},
             {id: 18, name: "Andrew Chambers", type: "fatsoma", picture: "images/test/paul.jpg"},
             {id: 19, name: "Nathan Pardoe", type: "fatsoma", picture: "images/test/ray.jpg"},
-            {id: 20, name: "Rudolf Hesse", type: "fatsoma", picture: "images/test/dean.jpg"}]
+            {id: 0, name: "Rudolf Hesse", type: "fatsoma", picture: "images/test/dean.jpg"}]
   test_models: [{id: 1, name: "One"}, {id: 2, name: "Two"}]
   extra_test_model: {id: 3, name: "Three"}

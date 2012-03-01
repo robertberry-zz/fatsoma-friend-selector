@@ -99,7 +99,7 @@
           type: "fatsoma",
           picture: "images/test/ray.jpg"
         }, {
-          id: 20,
+          id: 0,
           name: "Rudolf Hesse",
           type: "fatsoma",
           picture: "images/test/dean.jpg"
