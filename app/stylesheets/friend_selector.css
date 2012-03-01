@@ -24,14 +24,19 @@
     color: #444444;
     margin: 0;
     overflow: auto;
-    padding: 0;
-    width: 542px;
+    padding: 0 2px;
+    width: 536px;
     z-index: 100
+}
+
+#selector .autocomplete_box {
+	margin-top: -3px;
 }
 
 #selector ul.autocomplete li {
     padding: 10px;
     line-height: 50px;
+    border-bottom: 2px solid #fff;
 }
 
 #selector ul.autocomplete li img.avatar {
@@ -118,6 +123,7 @@
 	-khtml-border-radius: 3px;
 	border-radius: 3px;
 	border: 1px solid #5E8999;
+	margion-left: 0;
 }
 
 /* clearfix hack */
