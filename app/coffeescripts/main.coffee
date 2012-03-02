@@ -13,5 +13,5 @@ includes = [
   "app"
 ]
 
-define includes, (_, _, _, app) ->
-  {from_fixtures: app}
+require includes, (_, _, _, app) ->
+  selector = app.from_ajax "./friend-list"
