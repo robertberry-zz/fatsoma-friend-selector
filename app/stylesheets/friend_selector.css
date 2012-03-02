@@ -29,9 +29,14 @@
     z-index: 100
 }
 
+#selector .autocomplete_box {
+    margin-top: -3px;
+}
+
 #selector ul.autocomplete li {
     padding: 10px;
     line-height: 50px;
+    border-bottom: 2px solid #fff;
 }
 
 #selector ul.autocomplete li img.avatar {
