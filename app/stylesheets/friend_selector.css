@@ -109,7 +109,7 @@
     text-decoration: underline
 }
 
-#selector div input.selected_create {
+input.selected_create {
     height: 36px;
     line-height: 36px;
     font-size: 14px;
