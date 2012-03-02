@@ -16,11 +16,12 @@
       },
       from_ajax: function(url) {
         return $.ajax(url, {
-          success: function(request) {
+          dataType: "json",
+          success: function(friends) {
             var selector;
             selector = new views.FriendSelector({
               el: $("#selector"),
-              friends: new models.Users
+              friends: new models.Users(friends)
             });
             return selector.render();
           }

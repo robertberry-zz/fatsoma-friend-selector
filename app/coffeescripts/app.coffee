@@ -17,8 +17,9 @@ define includes, ($, _, Backbone, views, models) ->
 
   from_ajax: (url) ->
     $.ajax url,
-      success: (request) ->
+      dataType: "json"
+      success: (friends) ->
         selector = new views.FriendSelector
           el: $("#selector")
-          friends: new models.Users
+          friends: new models.Users friends
         selector.render()
