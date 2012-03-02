@@ -5,7 +5,6 @@ define
                      <div class="autocomplete_box"></div>
                      <div class="selected"></div>
                      <div class="selected_hidden"></div>
-                     <div class="clearfix"><input class="selected_create" type="submit" value="Create Party" /></div>
                    '''
   user_autocomplete_item: '''
                           <img src="{{picture}}" alt="{{name}}" class="avatar" />
