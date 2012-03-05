@@ -4,14 +4,16 @@
 # Author: Robert Berry
 # Created: 10th February 2012
 
-# Bootstrap non-AMD-compliant modules (see
-# http://backbonetutorials.com/organizing-backbone-using-modules/)
+require.config
+  paths:
+    jquery: "libs/jquery/jquery-min"
+    underscore: "libs/underscore/underscore-min"
+    backbone: "libs/backbone/backbone-min"
+
 includes = [
-  "order!lib/jquery",
-  "order!lib/underscore",
-  "order!lib/backbone",
-  "app"
+  "app",
+  "fixtures"
 ]
 
-require includes, (_, _, _, app) ->
-  selector = app.from_ajax "./friend-list"
+require includes, (app, fixtures) ->
+  selector = app.from_fixtures fixtures.friends

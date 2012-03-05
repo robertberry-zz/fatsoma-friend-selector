@@ -1,11 +1,19 @@
 (function() {
   var includes;
 
-  includes = ["order!lib/jquery", "order!lib/underscore", "order!lib/backbone", "app"];
+  require.config({
+    paths: {
+      jquery: "libs/jquery/jquery-min",
+      underscore: "libs/underscore/underscore-min",
+      backbone: "libs/backbone/backbone-min"
+    }
+  });
 
-  require(includes, function(_, _, _, app) {
+  includes = ["app", "fixtures"];
+
+  require(includes, function(app, fixtures) {
     var selector;
-    return selector = app.from_ajax("./friend-list");
+    return selector = app.from_fixtures(fixtures.friends);
   });
 
 }).call(this);
