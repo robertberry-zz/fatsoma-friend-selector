@@ -14,7 +14,7 @@ CoffeeScript using [Guard](https://github.com/guard/guard).  We used
 modules. We used [Backbone](http://documentcloud.github.com/backbone/) for its
 MVC framework and [Mustache](http://mustache.github.com/) for its templating
 system. The project was built in a week through BDD-style programming using
-[Jasmine](http://pivotal.github.com/jasmine/) for writing specs. Oh, and
+[Jasmine](https://jasmine.github.io/) for writing specs. Oh, and
 [jQuery](http://jquery.com/) and
 [Underscore](http://documentcloud.github.com/underscore/) for the obvious.
 
